@@ -59,8 +59,6 @@ dependencies {
     implementation(libs.groovyJson)
     implementation(libs.kotlinReflect)
 
-    implementation(libs.futureKotlin("build-tools-api"))
-
     runtimeOnly(libs.futureKotlin("build-tools-impl")) {
         isTransitive = false
     }
