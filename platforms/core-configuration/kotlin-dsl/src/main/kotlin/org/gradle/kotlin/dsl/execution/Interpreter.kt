@@ -622,12 +622,14 @@ inline fun withContextClassLoader(classLoader: ClassLoader, block: () -> Unit) {
 private
 fun logCompilationOf(templateId: String, source: ScriptSource) {
     interpreterLogger.debug("Compiling $templateId from ${source.displayName}")
+    println("Compiling $templateId from ${source.displayName}")
 }
 
 
 private
 fun logClassLoadingOf(templateId: String, source: ScriptSource) {
     interpreterLogger.debug("Loading $templateId from ${source.displayName}")
+    println("Loading $templateId from ${source.displayName}")
 }
 
 

@@ -42,7 +42,9 @@ abstract class AbstractScriptCachingIntegrationTest : AbstractKotlinIntegrationT
 
     protected
     fun buildForCacheInspection(vararg arguments: String): ExecutionResult =
-        executerForCacheInspection(*arguments).run()
+        executerForCacheInspection(*arguments).withArgument(
+            "--debug", // Required to verify script compilation via log messages
+        ).run()
 
     protected
     fun buildWithDaemonHeapSize(heapMb: Int, vararg arguments: String): ExecutionResult =
@@ -54,7 +56,6 @@ abstract class AbstractScriptCachingIntegrationTest : AbstractKotlinIntegrationT
     fun executerForCacheInspection(vararg arguments: String): GradleExecuter =
         gradleExecuterFor(
             arrayOf(
-                "--debug", // Required to verify script compilation via log messages
                 "-Dorg.gradle.internal.operations.trace=${newFile("operation-trace")}",
                 *arguments
             )
