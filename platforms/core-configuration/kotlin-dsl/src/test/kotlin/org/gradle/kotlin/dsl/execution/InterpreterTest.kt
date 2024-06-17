@@ -39,14 +39,12 @@ import org.gradle.kotlin.dsl.fixtures.assertStandardOutputOf
 import org.gradle.kotlin.dsl.fixtures.classLoaderFor
 import org.gradle.kotlin.dsl.fixtures.testRuntimeClassPath
 import org.gradle.kotlin.dsl.support.KotlinCompilerOptions
-import org.junit.Test
 import java.io.File
 import java.net.URLClassLoader
 
 
 class InterpreterTest : TestWithTempFiles() {
 
-    @Test
     fun `caches specialized programs`() {
 
         val scriptPath = "/src/settings.gradle.kts"

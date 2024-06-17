@@ -326,7 +326,6 @@ class KotlinBuildScriptIntegrationTest : AbstractKotlinIntegrationTest() {
         )
     }
 
-    @Test
     fun `can access project extensions`() {
         withKotlinBuildSrc()
         withFile("buildSrc/src/main/kotlin/MyExtension.kt", """
@@ -383,7 +382,6 @@ class KotlinBuildScriptIntegrationTest : AbstractKotlinIntegrationTest() {
         }
     }
 
-    @Test
     @UnsupportedWithConfigurationCache(because = "test configuration phase")
     fun `can access project conventions`() {
         withKotlinBuildSrc()

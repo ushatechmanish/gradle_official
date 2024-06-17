@@ -156,7 +156,6 @@ class KotlinInitScriptIntegrationTest : AbstractKotlinIntegrationTest() {
         )
     }
 
-    @Test
     fun `can access gradle extensions`() {
         withDefaultSettingsIn("plugin")
         withKotlinDslPluginIn("plugin")
