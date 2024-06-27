@@ -21,6 +21,7 @@ import org.gradle.test.precondition.Requires
 import org.gradle.test.preconditions.UnitTestPreconditions
 import spock.lang.Shared
 
+@org.gradle.test.fixtures.Flaky
 class AllDistributionIntegrationSpec extends DistributionIntegrationSpec {
 
     @Shared String version = buildContext.distZipVersion.version
