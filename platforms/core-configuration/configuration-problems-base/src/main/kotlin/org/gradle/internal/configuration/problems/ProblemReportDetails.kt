@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.gradle.internal.cc.impl.problems
+package org.gradle.internal.configuration.problems
 
-import org.gradle.internal.configuration.problems.StructuredMessage
+import org.gradle.api.internal.DocumentationRegistry
 
 
 data class ProblemReportDetails(
@@ -25,4 +25,22 @@ data class ProblemReportDetails(
     val cacheActionDescription: StructuredMessage,
     val requestedTasks: String?,
     val totalProblemCount: Int
-)
+) : JsonSource {
+    override fun writeToJson(jsonWriter: JsonModelWriterCommon) {
+        with(jsonWriter) {
+            property("totalProblemCount", totalProblemCount.toString())
+            buildDisplayName?.let {
+                property("buildName", it)
+            }
+            requestedTasks?.let {
+                property("requestedTasks", it)
+            }
+            property("cacheAction", cacheAction)
+            property("cacheActionDescription") {
+                writeStructuredMessage(cacheActionDescription)
+            }
+            property("documentationLink", DocumentationRegistry().getDocumentationFor("configuration_cache"))
+        }
+    }
+}
+

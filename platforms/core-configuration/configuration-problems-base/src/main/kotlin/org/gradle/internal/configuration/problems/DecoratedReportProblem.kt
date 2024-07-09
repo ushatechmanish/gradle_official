@@ -25,9 +25,121 @@ import org.gradle.internal.problems.failure.StackTraceRelevance
 data class DecoratedReportProblem(
     val trace: PropertyTrace,
     val message: StructuredMessage,
-    val failure: DecoratedFailure? = null,
-    val documentationSection: DocumentationSection? = null
-)
+    val failure: DecoratedFailure?,
+    val docLink: String?,
+    val kind: String
+) : JsonSource {
+
+    private
+    fun JsonModelWriterCommon.writePropertyTrace(trace: PropertyTrace) {
+        when (trace) {
+            is PropertyTrace.Property -> {
+                when (trace.kind) {
+                    PropertyKind.Field -> {
+                        kind(trace)
+                        property("declaringType", firstTypeFrom(trace.trace).name)
+                    }
+
+                    PropertyKind.PropertyUsage -> {
+                        kind(trace)
+                        property("from", projectPathFrom(trace.trace))
+                    }
+
+                    else -> {
+                        kind(trace)
+                        property("task", taskPathFrom(trace.trace))
+                    }
+                }
+            }
+
+            is PropertyTrace.SystemProperty -> {
+                property("kind", "SystemProperty")
+                property("name", trace.name)
+            }
+
+            is PropertyTrace.Task -> {
+                property("kind", "Task")
+                property("path", trace.path)
+                property("type", trace.type.name)
+            }
+
+            is PropertyTrace.Bean -> {
+                property("kind", "Bean")
+                property("type", trace.type.name)
+            }
+
+            is PropertyTrace.Project -> {
+                property("kind", "Project")
+                property("path", trace.path)
+            }
+
+            is PropertyTrace.BuildLogic -> {
+                property("kind", "BuildLogic")
+                property("location", trace.source.displayName)
+            }
+
+            is PropertyTrace.BuildLogicClass -> {
+                property("kind", "BuildLogicClass")
+                property("type", trace.name)
+            }
+
+            PropertyTrace.Gradle -> {
+                property("kind", "Gradle")
+            }
+
+            PropertyTrace.Unknown -> {
+                property("kind", "Unknown")
+            }
+        }
+    }
+
+    private fun JsonModelWriterCommon.kind(trace: PropertyTrace.Property) {
+        property("kind", trace.kind.name)
+        property("name", trace.name)
+    }
+
+    override fun writeToJson(jsonWriter: JsonModelWriterCommon) {
+        with(jsonWriter) {
+            jsonObject {
+                property("trace") {
+                    jsonObjectList(trace.sequence.asIterable()) { trace ->
+                        writePropertyTrace(trace)
+                    }
+                }
+                property(kind) {
+                    writeStructuredMessage(message)
+                }
+                docLink?.let {
+                    property("documentationLink", it)
+                }
+                failure?.let { failure ->
+                    writeError(failure)
+                }
+            }
+        }
+
+    }
+}
+
+fun JsonModelWriterCommon.writeError(failure: DecoratedFailure) {
+    property("error") {
+        jsonObject {
+            failure.summary?.let {
+                property("summary") {
+                    writeStructuredMessage(it)
+                }
+            }
+
+            failure.parts?.let {
+                property("parts") {
+                    jsonObjectList(it) { (isInternal, text) ->
+                        property(if (isInternal) "internalText" else "text", text)
+                    }
+                }
+            }
+        }
+    }
+}
 
 
 data class DecoratedFailure(

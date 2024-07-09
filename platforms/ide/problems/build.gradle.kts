@@ -16,6 +16,8 @@
 
 plugins {
     id("gradlebuild.distribution.api-java")
+    id("gradlebuild.distribution.implementation-kotlin")
+    id("gradlebuild.kotlin-dsl-sam-with-receiver")
 }
 
 description = """Problem SPI implementations.
@@ -47,16 +49,22 @@ tasks.processResources {
 }
 
 dependencies {
-    api(projects.problemsApi)
     api(projects.buildOperations)
-    api(projects.stdlibJavaExtensions)
-    api(projects.serviceProvider)
     api(projects.buildOption)
     api(projects.concurrent)
+    api(projects.core)
     api(projects.fileTemp)
-    api(projects.configurationProblemsBase)
+    api(projects.loggingApi)
+    api(projects.messaging)
+    api(projects.problemsApi)
+    api(projects.serviceProvider)
+    api(projects.stdlibJavaExtensions)
 
+    api(libs.kotlinStdlib)
     api(libs.jsr305)
+
+    implementation(projects.configurationProblemsBase)
+    implementation(projects.logging)
 
     integTestImplementation(projects.internalTesting)
     integTestImplementation(testFixtures(projects.logging))
