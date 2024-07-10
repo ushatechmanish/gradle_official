@@ -18,6 +18,7 @@ package org.gradle.problems.internal
 import org.gradle.api.internal.DocumentationRegistry
 import org.gradle.api.internal.StartParameterInternal
 import org.gradle.api.internal.file.temp.TemporaryFileProvider
+import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.problems.internal.FileLocation
 import org.gradle.api.problems.internal.Problem
@@ -38,7 +39,7 @@ import org.gradle.internal.problems.failure.FailureFactory
 import org.gradle.problems.buildtree.ProblemReporter
 import java.io.File
 
-val logger = Logging.getLogger(DefaultProblemsReportCreator::class.java)
+val logger: Logger = Logging.getLogger(DefaultProblemsReportCreator::class.java)
 
 class DefaultProblemsReportCreator(
     executorFactory: ExecutorFactory?,
@@ -67,9 +68,7 @@ class DefaultProblemsReportCreator(
     }
 
     override fun report(reportDir: File, validationFailures: ProblemReporter.ProblemConsumer) {
-        val builder = StructuredMessage.Builder()
-        builder.text("text")
-        val outputFile = report.writeReportFileTo(
+        report.writeReportFileTo(
             reportDir, object : JsonSource {
                 override fun writeToJson(jsonWriter: JsonModelWriterCommon) {
                     with(jsonWriter) {
@@ -87,8 +86,7 @@ class DefaultProblemsReportCreator(
                         property("documentationLinkCaption", "Problem Report")
                     }
                 }
-            })
-        outputFile?.let {
+            })?.let {
             val url = ConsoleRenderer().asClickableFileUrl(it)
             logger.warn("Problems report is available at: $url")
         }
@@ -107,21 +105,17 @@ class DefaultProblemsReportCreator(
                             }
                         }
 
-                        val builder = StructuredMessage.Builder()
-                            .text(problem.definition.id.displayName)
-
-                        val m = builder.build()
                         property("problem") {
-                            writeStructuredMessage(m)
+                            writeStructuredMessage(StructuredMessage.forText(problem.definition.id.displayName))
                         }
-
                         problem.details?.let {
                             property("problemDetails") {
-                                writeStructuredMessage(StructuredMessage.Builder()
-                                    .text(it).build())
+                                writeStructuredMessage(
+                                    StructuredMessage.Builder()
+                                        .text(it).build()
+                                )
                             }
                         }
-
                         problem.definition.documentationLink?.let {
                             property("documentationLink", it.url)
                         }
