@@ -34,6 +34,7 @@ import org.gradle.internal.service.scopes.ServiceScope
 import java.io.Closeable
 import java.io.File
 import java.nio.file.Files
+import java.util.Locale
 import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
 import kotlin.contracts.ExperimentalContracts
@@ -47,12 +48,14 @@ enum class DiagnosticKind {
     INCOMPATIBLE_TASK
 }
 
+fun String.toCapitalized() = this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+
 @ServiceScope(Scope.BuildTree::class)
 class CommonReport(
     executorFactory: ExecutorFactory,
     temporaryFileProvider: TemporaryFileProvider,
     internalOptions: InternalOptions,
-    reportFileName: String = "configuration-cache-report"
+    reportFileName: String
 ) : Closeable {
 
     companion object {
@@ -196,7 +199,7 @@ class CommonReport(
                 if (!awaitTermination(1, TimeUnit.SECONDS)) {
                     val unfinishedTasks = shutdownNow()
                     logger.warn(
-                        "Configuration cache report is taking too long to write... "
+                        "${reportFileName.toCapitalized()} is taking too long to write... "
                             + "The build might finish before the report has been completely written."
                     )
                     logger.info("Unfinished tasks: {}", unfinishedTasks)
@@ -209,7 +212,7 @@ class CommonReport(
                 val reportFile = reportDir.resolve("$reportFileName.html")
                 if (!reportFile.exists()) {
                     require(reportDir.mkdirs()) {
-                        "Could not create configuration cache report directory '$reportDir'"
+                        "Could not create ${reportFileName} directory '$reportDir'"
                     }
                     Files.move(spoolFile.toPath(), reportFile.toPath())
                 }
@@ -239,9 +242,9 @@ class CommonReport(
 
         val writer = HtmlReportWriter(streamWriter, htmlReportTemplate, jsonWriter)
 
-        State.Spooling(
-            reportFileName,
-            executorFactory.create("Configuration cache report writer", 1),
+       State.Spooling(
+            reportFileName.replace(" ", "-"),
+            executorFactory.create("${reportFileName.toCapitalized()} writer", 1),
             CharBuf::class.java.classLoader,
             writer,
             hashingStream,

@@ -174,7 +174,7 @@ class ConfigurationCacheServices : AbstractGradleModuleServices() {
             temporaryFileProvider: TemporaryFileProvider,
             internalOptions: InternalOptions
         ): CommonReport {
-            return CommonReport(executorFactory, temporaryFileProvider, internalOptions)
+            return CommonReport(executorFactory, temporaryFileProvider, internalOptions,"configuration cache report")
         }
     }
 }
