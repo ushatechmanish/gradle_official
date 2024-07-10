@@ -28,7 +28,30 @@ data class DecoratedReportProblem(
     val failure: DecoratedFailure?,
     val docLink: String?,
     val kind: String
-) : JsonSource {
+)
+
+
+final class DecoratedReportProblemJsonSource(val problem: DecoratedReportProblem) : JsonSource{
+    override fun writeToJson(jsonWriter: JsonModelWriterCommon) {
+        with(jsonWriter) {
+            jsonObject {
+                property("trace") {
+                    jsonObjectList(problem.trace.sequence.asIterable()) { trace ->
+                        writePropertyTrace(trace)
+                    }
+                }
+                property(problem.kind) {
+                    writeStructuredMessage(problem.message)
+                }
+                problem.docLink?.let {
+                    property("documentationLink", it)
+                }
+                problem.failure?.let {
+                    writeError(it)
+                }
+            }
+        }
+    }
 
     private
     fun JsonModelWriterCommon.writePropertyTrace(trace: PropertyTrace) {
@@ -96,28 +119,6 @@ data class DecoratedReportProblem(
     private fun JsonModelWriterCommon.kind(trace: PropertyTrace.Property) {
         property("kind", trace.kind.name)
         property("name", trace.name)
-    }
-
-    override fun writeToJson(jsonWriter: JsonModelWriterCommon) {
-        with(jsonWriter) {
-            jsonObject {
-                property("trace") {
-                    jsonObjectList(trace.sequence.asIterable()) { trace ->
-                        writePropertyTrace(trace)
-                    }
-                }
-                property(kind) {
-                    writeStructuredMessage(message)
-                }
-                docLink?.let {
-                    property("documentationLink", it)
-                }
-                failure?.let { failure ->
-                    writeError(failure)
-                }
-            }
-        }
-
     }
 }
 

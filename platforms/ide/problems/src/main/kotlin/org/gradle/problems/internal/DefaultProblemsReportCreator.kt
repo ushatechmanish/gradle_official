@@ -110,13 +110,16 @@ class DefaultProblemsReportCreator(
                         val builder = StructuredMessage.Builder()
                             .text(problem.definition.id.displayName)
 
-                        problem.details?.let {
-                            builder.text("\b$it")
-                        }
-
                         val m = builder.build()
                         property("problem") {
                             writeStructuredMessage(m)
+                        }
+
+                        problem.details?.let {
+                            property("problemDetails") {
+                                writeStructuredMessage(StructuredMessage.Builder()
+                                    .text(it).build())
+                            }
                         }
 
                         problem.definition.documentationLink?.let {

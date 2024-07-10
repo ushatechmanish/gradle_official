@@ -39,6 +39,7 @@ import org.gradle.internal.configuration.problems.CommonReport
 import org.gradle.internal.configuration.problems.DocumentationSection
 import org.gradle.internal.configuration.problems.ProblemFactory
 import org.gradle.internal.configuration.problems.ProblemReportDetails
+import org.gradle.internal.configuration.problems.ProblemReportDetailsJsonSource
 import org.gradle.internal.configuration.problems.ProblemSeverity
 import org.gradle.internal.configuration.problems.ProblemsListener
 import org.gradle.internal.configuration.problems.PropertyProblem
@@ -278,7 +279,7 @@ class ConfigurationCacheProblems(
         val hasNoProblems = summary.problemCount == 0
         val outputDirectory = outputDirectoryFor(reportDir)
         val details = detailsFor(summary)
-        val htmlReportFile = report.writeReportFileTo(outputDirectory, details)
+        val htmlReportFile = report.writeReportFileTo(outputDirectory, ProblemReportDetailsJsonSource(details))
         if (htmlReportFile == null) {
             // there was nothing to report (no problems, no build configuration inputs)
             require(hasNoProblems)

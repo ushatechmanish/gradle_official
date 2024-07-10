@@ -25,22 +25,24 @@ data class ProblemReportDetails(
     val cacheActionDescription: StructuredMessage,
     val requestedTasks: String?,
     val totalProblemCount: Int
-) : JsonSource {
+)
+
+
+class ProblemReportDetailsJsonSource(val details: ProblemReportDetails) : JsonSource {
     override fun writeToJson(jsonWriter: JsonModelWriterCommon) {
         with(jsonWriter) {
-            property("totalProblemCount", totalProblemCount.toString())
-            buildDisplayName?.let {
+            property("totalProblemCount", details.totalProblemCount.toString())
+            details.buildDisplayName?.let {
                 property("buildName", it)
             }
-            requestedTasks?.let {
+            details.requestedTasks?.let {
                 property("requestedTasks", it)
             }
-            property("cacheAction", cacheAction)
+            property("cacheAction", details.cacheAction)
             property("cacheActionDescription") {
-                writeStructuredMessage(cacheActionDescription)
+                writeStructuredMessage(details.cacheActionDescription)
             }
             property("documentationLink", DocumentationRegistry().getDocumentationFor("configuration_cache"))
         }
     }
 }
-

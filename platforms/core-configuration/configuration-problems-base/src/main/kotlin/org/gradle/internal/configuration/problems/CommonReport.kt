@@ -261,12 +261,14 @@ class CommonReport(
         val link = problem.documentationSection?.let { section ->
             this.documentationRegistry.documentationLinkFor(section)
         }
-        return DecoratedReportProblem(
-            problem.trace,
-            decorateMessage(problem, failure),
-            decoratedFailureFor(failure, severity),
-            link,
-            kind
+        return DecoratedReportProblemJsonSource(
+            DecoratedReportProblem(
+                problem.trace,
+                decorateMessage(problem, failure),
+                decoratedFailureFor(failure, severity),
+                link,
+                kind
+            )
         )
     }
 
