@@ -68,25 +68,24 @@ class DefaultProblemsReportCreator(
     }
 
     override fun report(reportDir: File, validationFailures: ProblemReporter.ProblemConsumer) {
-        report.writeReportFileTo(
-            reportDir, object : JsonSource {
-                override fun writeToJson(jsonWriter: JsonModelWriterCommon) {
-                    with(jsonWriter) {
-                        property("reportContext", "problems report")
-                        property("totalProblemCount", problemCount.toString())
-                        buildNameHandler.buildName?.let {
-                            property("buildName", it)
-                        }
-                        property("requestedTasks", taskNames.joinToString(" "))
-                        property("cacheAction", "cacheAction")
-                        property("cacheActionDescription") {
-                            writeStructuredMessage(StructuredMessage.Builder().text("").build())
-                        }
-                        property("documentationLink", DocumentationRegistry().getDocumentationFor("problem-report"))
-                        property("documentationLinkCaption", "Problem Report")
+        report.writeReportFileTo(reportDir, object : JsonSource {
+            override fun writeToJson(jsonWriter: JsonModelWriterCommon) {
+                with(jsonWriter) {
+                    property("reportContext", "problems report")
+                    property("totalProblemCount", problemCount.toString())
+                    buildNameHandler.buildName?.let {
+                        property("buildName", it)
                     }
+                    property("requestedTasks", taskNames.joinToString(" "))
+                    property("cacheAction", "cacheAction")
+                    property("cacheActionDescription") {
+                        writeStructuredMessage(StructuredMessage.Builder().text("").build())
+                    }
+                    property("documentationLink", DocumentationRegistry().getDocumentationFor("problem-report"))
+                    property("documentationLinkCaption", "Problem Report")
                 }
-            })?.let {
+            }
+        })?.let {
             val url = ConsoleRenderer().asClickableFileUrl(it)
             logger.warn("Problems report is available at: $url")
         }

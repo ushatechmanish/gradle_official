@@ -230,7 +230,7 @@ class CommonReport(
     }
 
     private val htmlReportTemplate = HtmlReportTemplate()
-    private val spoolFile = temporaryFileProvider.createTemporaryFile(reportFileName, ".html")
+    private val spoolFile = temporaryFileProvider.createTemporaryFile(reportFileName.replace(" ", "-"), ".html")
 
     private val hashingStream = HashingOutputStream(Hashing.md5(), spoolFile.outputStream().buffered())
 
