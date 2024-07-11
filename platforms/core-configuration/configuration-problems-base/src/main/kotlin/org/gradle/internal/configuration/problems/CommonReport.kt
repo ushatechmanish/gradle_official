@@ -229,21 +229,22 @@ class CommonReport(
         }
     }
 
-    private val htmlReportTemplate = HtmlReportTemplate()
-    private val spoolFile = temporaryFileProvider.createTemporaryFile(reportFileName.replace(" ", "-"), ".html")
-
-    private val hashingStream = HashingOutputStream(Hashing.md5(), spoolFile.outputStream().buffered())
-
-    private val streamWriter = hashingStream.writer()
-    private val jsonWriter = JsonModelWriter(streamWriter)
 
     private
     var state: State = State.Idle { problem ->
+        val htmlReportTemplate = HtmlReportTemplate()
+        val reportDescription = reportFileName.replace(" ", "-")
+        val spoolFile = temporaryFileProvider.createTemporaryFile(reportDescription, ".html")
+
+        val hashingStream = HashingOutputStream(Hashing.md5(), spoolFile.outputStream().buffered())
+
+        val streamWriter = hashingStream.writer()
+        val jsonWriter = JsonModelWriter(streamWriter)
 
         val writer = HtmlReportWriter(streamWriter, htmlReportTemplate, jsonWriter)
 
-       State.Spooling(
-            reportFileName.replace(" ", "-"),
+        State.Spooling(
+            reportDescription,
             executorFactory.create("${reportFileName.toCapitalized()} writer", 1),
             CharBuf::class.java.classLoader,
             writer,
