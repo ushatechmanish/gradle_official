@@ -132,6 +132,19 @@ data class StructuredMessage(val fragments: List<Fragment>) {
     }
 }
 
+fun JsonModelWriterCommon.writeStructuredMessage(message: StructuredMessage) {
+    jsonObjectList(message.fragments) { fragment ->
+        writeFragment(fragment)
+    }
+}
+
+fun JsonModelWriterCommon.writeFragment(fragment: StructuredMessage.Fragment) {
+    when (fragment) {
+        is StructuredMessage.Fragment.Reference -> property("name", fragment.name)
+        is StructuredMessage.Fragment.Text -> property("text", fragment.text)
+    }
+}
+
 
 /**
  * Subtypes are expected to support [PropertyTrace.equals] and [PropertyTrace.hashCode].

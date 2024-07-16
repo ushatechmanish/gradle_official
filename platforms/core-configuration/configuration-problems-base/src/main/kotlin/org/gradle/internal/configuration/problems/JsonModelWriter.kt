@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-package org.gradle.internal.cc.impl.problems
+package org.gradle.internal.configuration.problems
 
-enum class ProblemSeverity {
-    Info,
-    Failure,
-    Warning,
-    /**
-     * A problem produced by a task marked as [notCompatibleWithConfigurationCache][Task.notCompatibleWithConfigurationCache].
-     */
-    Suppressed
+import java.io.Writer
+
+class JsonModelWriter(writer: Writer) : JsonModelWriterCommon(writer) {
+    fun beginModel() {
+        beginObject()
+
+        propertyName("diagnostics")
+        beginArray()
+    }
+
+    fun endModel(details: JsonSource) {
+        endArray()
+
+        comma()
+        details.writeToJson(this)
+
+        endObject()
+    }
 }

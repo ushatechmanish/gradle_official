@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package org.gradle.internal.cc.impl.problems
+package org.gradle.internal.configuration.problems
 
-import org.gradle.internal.configuration.problems.StructuredMessage
-
-
-data class ProblemReportDetails(
-    val buildDisplayName: String?,
-    val cacheAction: String,
-    val cacheActionDescription: StructuredMessage,
-    val requestedTasks: String?,
-    val totalProblemCount: Int
-)
+enum class ProblemSeverity {
+    Info,
+    Failure,
+    Warning,
+    /**
+     * A problem produced by a task marked as [notCompatibleWithConfigurationCache][Task.notCompatibleWithConfigurationCache].
+     */
+    Suppressed
+}
