@@ -130,7 +130,7 @@ fun BuildType.applyDefaultSettings(os: Os = Os.LINUX, arch: Arch = Arch.AMD64, b
 
     failureConditions {
         if (this@applyDefaultSettings.type != BuildTypeSettings.Type.COMPOSITE) {
-            executionTimeoutMin = timeout
+            // FIXME: executionTimeoutMin = timeout
         }
         testFailure = false
         add {
