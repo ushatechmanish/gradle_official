@@ -2,3 +2,4 @@
  - Introduced `--rerun` flag for individual task rerun.
  - Improved dependency block for test suites to be strongly typed.
  - Added a pluggable system for Java toolchains provisioning.
+ - DUMMY3
