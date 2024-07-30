@@ -55,7 +55,7 @@ class NebulaPluginsSmokeTest extends AbstractPluginValidatingSmokeTest implement
         when:
         buildFile << """
             plugins {
-                id 'nebula.plugin-plugin' version '${TestedVersions.nebulaPluginPlugin}'
+                id 'com.netflix.nebula.plugin-plugin' version '${TestedVersions.nebulaPluginPlugin}'
             }
         """
 
