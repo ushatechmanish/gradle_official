@@ -24,6 +24,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.GradleInternal
+import org.gradle.api.internal.artifacts.BaseRepositoryFactory.PLUGIN_PORTAL_OVERRIDE_URL_PROPERTY
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
@@ -112,8 +113,10 @@ abstract class BuildCommitDistribution @Inject internal constructor(
 
     private
     fun runDistributionBuild(checkoutDir: File, os: OutputStream) {
+        val commands = getBuildCommands()
+        println("Running distribution build with: ${commands.joinToString(" ")}")
         execOps.exec {
-            commandLine(*getBuildCommands())
+            commandLine(*commands)
             workingDir = checkoutDir
             standardOutput = os
             errorOutput = os
@@ -166,6 +169,9 @@ abstract class BuildCommitDistribution @Inject internal constructor(
         val buildCommands = mutableListOf(
             "./gradlew" + (if (OperatingSystem.current().isWindows) ".bat" else ""),
             "--no-configuration-cache",
+            "--init-script",
+            project.rootProject.file("gradle/shared-with-buildSrc/mirrors.settings.gradle.kts").absolutePath,
+            "-D${PLUGIN_PORTAL_OVERRIDE_URL_PROPERTY}=${System.getProperty(PLUGIN_PORTAL_OVERRIDE_URL_PROPERTY)}",
             "clean",
             "-Dscan.tag.BuildCommitDistribution",
             ":distributions-full:binDistributionZip",
@@ -173,6 +179,8 @@ abstract class BuildCommitDistribution @Inject internal constructor(
             "-PtoolingApiShadedJarInstallPath=" + commitDistributionToolingApiJar.get().asFile.absolutePath,
             "-PbuildCommitDistribution=true"
         )
+
+        //buildCommands.addAll(getRepoMirrorSystemProperties())
 
         if (project.gradle.startParameter.isBuildCacheEnabled) {
             buildCommands.add("--build-cache")
@@ -187,4 +195,17 @@ abstract class BuildCommitDistribution @Inject internal constructor(
 
         return buildCommands.toTypedArray()
     }
+
+    private
+    fun getRepoMirrorSystemProperties(): List<String> = collectMirrorUrls().map {
+        "-Dorg.gradle.integtest.mirrors.${it.key}=${it.value}"
+    }
+
+    private
+    fun collectMirrorUrls(): Map<String, String> =
+        // expected env var format: repo1_id:repo1_url,repo2_id:repo2_url,...
+        System.getenv("REPO_MIRROR_URLS")?.ifBlank { null }?.split(',')?.associate { nameToUrl ->
+            val (name, url) = nameToUrl.split(':', limit = 2)
+            name to url
+        } ?: emptyMap()
 }
