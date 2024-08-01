@@ -169,8 +169,6 @@ abstract class BuildCommitDistribution @Inject internal constructor(
         val buildCommands = mutableListOf(
             "./gradlew" + (if (OperatingSystem.current().isWindows) ".bat" else ""),
             "--no-configuration-cache",
-            "--init-script",
-            project.rootProject.file("gradle/shared-with-buildSrc/mirrors.settings.gradle.kts").absolutePath,
             "-D${PLUGIN_PORTAL_OVERRIDE_URL_PROPERTY}=${System.getProperty(PLUGIN_PORTAL_OVERRIDE_URL_PROPERTY)}",
             "clean",
             "-Dscan.tag.BuildCommitDistribution",
