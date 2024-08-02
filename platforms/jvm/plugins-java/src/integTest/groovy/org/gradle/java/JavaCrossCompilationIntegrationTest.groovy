@@ -28,6 +28,7 @@ import org.gradle.util.GradleVersion
 import org.junit.Assume
 
 import static org.gradle.internal.serialize.JavaClassUtil.getClassMajorVersion
+import static org.gradle.jvm.toolchain.internal.LocationListInstallationSupplier.JAVA_INSTALLATIONS_PATHS_PROPERTY
 
 @DoesNotSupportNonAsciiPaths(reason = "Java 6 seems to have issues with non-ascii paths")
 @Flaky(because = "https://github.com/gradle/gradle-private/issues/3901")
@@ -46,6 +47,8 @@ class JavaCrossCompilationIntegrationTest extends AbstractIntegrationSpec {
         def target = AvailableJavaHomes.getJdk(javaVersion)
         if (version == "1.7") {
             println(AvailableJavaHomes.getAvailableJvms())
+            println(System.getProperty(JAVA_INSTALLATIONS_PATHS_PROPERTY))
+            println(AvailableJavaHomes.discoverLocalInstallations())
             assert false
         }
         Assume.assumeNotNull(target)

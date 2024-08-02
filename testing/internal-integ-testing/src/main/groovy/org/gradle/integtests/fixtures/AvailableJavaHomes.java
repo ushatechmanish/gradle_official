@@ -339,7 +339,7 @@ public abstract class AvailableJavaHomes {
         return INSTALLATIONS.get();
     }
 
-    private static List<JvmInstallationMetadata> discoverLocalInstallations() {
+    public static List<JvmInstallationMetadata> discoverLocalInstallations() {
         ExecHandleFactory execHandleFactory = TestFiles.execHandleFactory();
         TemporaryFileProvider temporaryFileProvider = TestFiles.tmpDirTemporaryFileProvider(new File(SystemProperties.getInstance().getJavaIoTmpDir()));
         DefaultJvmMetadataDetector defaultJvmMetadataDetector =
