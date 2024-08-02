@@ -46,6 +46,7 @@ class JavaCrossCompilationIntegrationTest extends AbstractIntegrationSpec {
         def javaVersion = toJavaVersion(version)
         def target = AvailableJavaHomes.getJdk(javaVersion)
         if (version == "1.7") {
+            Thread.sleep(600000)
             println(AvailableJavaHomes.getAvailableJvms())
             println(System.getProperty(JAVA_INSTALLATIONS_PATHS_PROPERTY))
             println(AvailableJavaHomes.discoverLocalInstallations())
