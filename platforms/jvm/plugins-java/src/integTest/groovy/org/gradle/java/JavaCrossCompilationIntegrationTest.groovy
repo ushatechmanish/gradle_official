@@ -44,6 +44,10 @@ class JavaCrossCompilationIntegrationTest extends AbstractIntegrationSpec {
     def withJavaProjectUsingToolchainsForJavaVersion(String version) {
         def javaVersion = toJavaVersion(version)
         def target = AvailableJavaHomes.getJdk(javaVersion)
+        if (version == "1.7") {
+            println(AvailableJavaHomes.getAvailableJvms())
+            assert false
+        }
         Assume.assumeNotNull(target)
         withJavaProjectUsingToolchainsForJavaVersion(target)
     }
@@ -94,7 +98,7 @@ class JavaCrossCompilationIntegrationTest extends AbstractIntegrationSpec {
         }
         succeeds 'test'
         getClassMajorVersion(javaClassFile("Thing.class")) == TestJavaClassUtil.getClassVersion(toJavaVersion(version))
-        getClassMajorVersion(classFile ( "java", "test", "ThingTest.class")) == TestJavaClassUtil.getClassVersion(toJavaVersion(version))
+        getClassMajorVersion(classFile("java", "test", "ThingTest.class")) == TestJavaClassUtil.getClassVersion(toJavaVersion(version))
 
         where:
         version << javaVersionsToCrossCompileAgainst()
