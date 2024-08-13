@@ -93,6 +93,8 @@ fun isEc2Agent() = InetAddress.getLocalHost().hostName.startsWith("ip-")
 
 fun Project.extractCiData() {
     if (isCiServer) {
+        rootProject.projectDir.resolve("build/report/my").mkdirs()
+        rootProject.projectDir.resolve("build/report/my/test.html").writeText("<html></html>")
         buildScan {
             background {
                 setCompileAllScanSearch(execAndGetStdoutIgnoringError("git", "rev-parse", "--verify", "HEAD"))
