@@ -278,9 +278,9 @@ fun configureTests() {
 
                 if (BuildEnvironment.isCiServer) {
                     when {
-                        OperatingSystem.current().isLinux -> requirements = listOf("os=linux", "gbt-dogfooding")
-                        OperatingSystem.current().isWindows -> requirements = listOf("os=windows", "gbt-dogfooding")
-                        OperatingSystem.current().isMacOsX -> requirements = listOf("os=macos", "gbt-dogfooding")
+                        OperatingSystem.current().isLinux -> requirements = listOf("os=linux", "gbt-dogfooding-staging")
+                        OperatingSystem.current().isWindows -> requirements = listOf("os=windows", "gbt-dogfooding-staging")
+                        OperatingSystem.current().isMacOsX -> requirements = listOf("os=macos", "gbt-dogfooding-staging")
                     }
                 } else {
                     requirements = listOf("gbt-dogfooding")
