@@ -32,6 +32,7 @@ class CheckProject(
         param("teamcity.vcsTrigger.runBuildOnSameRevisionInEveryBranch", "false")
         param("env.DEVELOCITY_ACCESS_KEY", "%ge.gradle.org.access.key%;%gbt-td.grdev.net.access.key%")
         param("env.CHROME_BIN", "%linux.chrome.bin.path%")
+        param("env.ORG_GRADLE_PROJECT_testDistributionServerUrl", "https://gbt-td.grdev.net")
 
         text(
             "additional.gradle.parameters",
