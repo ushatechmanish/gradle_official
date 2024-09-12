@@ -24,16 +24,15 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class ShadowPluginSmokeTest extends AbstractPluginValidatingSmokeTest {
 
-    @Issue('https://plugins.gradle.org/plugin/com.github.johnrengelman.shadow')
     @Issue('https://plugins.gradle.org/plugin/io.github.goooler.shadow')
-    def 'shadow plugin (#pluginId) #(pluginVersion)'() {
+    def 'shadow plugin'() {
         given:
         buildFile << """
             import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer
 
             plugins {
                 id 'java' // or 'groovy' Must be explicitly applied
-                id '$pluginId' version '$pluginVersion'
+                id 'io.github.goooler.shadow' version '$TestedVersions.shadow'
             }
 
             ${mavenCentralRepository()}
@@ -75,18 +74,12 @@ class ShadowPluginSmokeTest extends AbstractPluginValidatingSmokeTest {
         if (GradleContextualExecuter.isConfigCache()) {
             result.assertConfigurationCacheStateLoaded()
         }
-
-        where:
-        pluginId                            | pluginVersion
-        "com.github.johnrengelman.shadow"   | TestedVersions.shadow
-        "io.github.goooler.shadow"          | TestedVersions.shadowFork
     }
 
     @Override
     Map<String, Versions> getPluginsToValidate() {
         [
-            'com.github.johnrengelman.shadow': Versions.of(TestedVersions.shadow),
-            'io.github.goooler.shadow': Versions.of(TestedVersions.shadowFork)
+            'io.github.goooler.shadow': Versions.of(TestedVersions.shadow)
         ]
     }
 
