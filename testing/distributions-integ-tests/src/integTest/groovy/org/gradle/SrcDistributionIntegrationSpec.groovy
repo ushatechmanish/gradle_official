@@ -56,6 +56,7 @@ class SrcDistributionIntegrationSpec extends DistributionIntegrationSpec {
         !contentsDir.file(".git").exists()
 
         when:
+        print("Available Java Homes: ${AvailableJavaHomes.getAvailableJvms().collect { it.javaHome.absolutePath }}")
         executer.with {
             inDirectory(contentsDir)
             usingExecutable('gradlew')
