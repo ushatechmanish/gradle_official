@@ -271,7 +271,7 @@ class DefaultCommandLineActionFactoryTest extends Specification {
             "Groovy:        $GroovySystem.version",
             "Ant:           $Main.antVersion",
             "Launcher JVM:  ${Jvm.current()}",
-            "Daemon JVM:    Compatible with Java 11, vendor matching('adoptium') (from gradle/gradle-daemon-jvm.properties)",
+            "Daemon JVM:    Compatible with Java ${Jvm.current().javaVersion.majorVersion}, vendor matching('adoptium') (from gradle/gradle-daemon-jvm.properties)",
             "OS:            ${OperatingSystem.current()}",
             ""
         ].join(System.lineSeparator())
