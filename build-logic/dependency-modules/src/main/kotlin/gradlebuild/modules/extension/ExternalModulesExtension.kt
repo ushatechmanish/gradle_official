@@ -122,6 +122,7 @@ abstract class ExternalModulesExtension(isBundleGroovy4: Boolean) {
     val kotlinCompilerEmbeddable = futureKotlin("compiler-embeddable")
     val kotlinReflect = futureKotlin("reflect")
     val kotlinStdlib = futureKotlin("stdlib")
+    val kotlinBuildToolsImpl = futureKotlin("build-tools-impl")
     val kotlinxSerializationCore = "org.jetbrains.kotlinx:kotlinx-serialization-core"
     val kotlinxSerializationJson = "org.jetbrains.kotlinx:kotlinx-serialization-json"
     val kryo = "com.esotericsoftware.kryo:kryo"
