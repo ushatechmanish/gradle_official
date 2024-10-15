@@ -24,7 +24,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class ShadowPluginSmokeTest extends AbstractPluginValidatingSmokeTest {
 
-    @Issue('https://plugins.gradle.org/plugin/io.github.goooler.shadow')
+    @Issue('https://plugins.gradle.org/plugin/com.gradleup.shadow')
     def 'shadow plugin'() {
         given:
         buildFile << """
@@ -32,7 +32,7 @@ class ShadowPluginSmokeTest extends AbstractPluginValidatingSmokeTest {
 
             plugins {
                 id 'java' // or 'groovy' Must be explicitly applied
-                id 'io.github.goooler.shadow' version '$TestedVersions.shadow'
+                id 'com.gradleup.shadow' version '$TestedVersions.shadow'
             }
 
             ${mavenCentralRepository()}
@@ -79,7 +79,7 @@ class ShadowPluginSmokeTest extends AbstractPluginValidatingSmokeTest {
     @Override
     Map<String, Versions> getPluginsToValidate() {
         [
-            'io.github.goooler.shadow': Versions.of(TestedVersions.shadow)
+            'com.gradleup.shadow': Versions.of(TestedVersions.shadow)
         ]
     }
 
