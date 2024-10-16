@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -x
+
 #
 # Copyright © 2015-2021 the original authors.
 #
@@ -70,7 +72,6 @@
 app_path=$0
 
 unset fakeCredentials
-
 export
 
 # Need this for daisy-chained symlinks.
