@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -x
-
 #
 # Copyright © 2015-2021 the original authors.
 #
@@ -70,9 +68,6 @@ set -x
 
 # Resolve links: $0 may be a link
 app_path=$0
-
-unset fakeCredentials
-export
 
 # Need this for daisy-chained symlinks.
 while
@@ -255,8 +250,4 @@ eval "set -- $(
     )" '"$@"'
 
 
-if [ "$BUILD_TYPE_ID" == "Gradle_Master_Check_CompileAllBuild" ]; then
-    exec "$JAVACMD" "$@"
-else
-    exec "$JAVACMD" "$@" --debug
-fi
+exec "$JAVACMD" "$@"
