@@ -254,4 +254,9 @@ eval "set -- $(
         tr '\n' ' '
     )" '"$@"'
 
-exec "$JAVACMD" "$@" --debug
+
+if [ "$BUILD_TYPE_ID" == "Gradle_Master_Check_CompileAllBuild" ]; then
+    exec "$JAVACMD" "$@"
+else
+    exec "$JAVACMD" "$@" --debug
+fi
