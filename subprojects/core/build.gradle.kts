@@ -150,6 +150,7 @@ dependencies {
         exclude("org.checkerframework", "checker-qual")
     }
     implementation(libs.xmlApis)
+    implementation(libs.opentelemetryApi)
 
     compileOnly(libs.kotlinStdlib) {
         because("it needs to forward calls from instrumented code to the Kotlin standard library")

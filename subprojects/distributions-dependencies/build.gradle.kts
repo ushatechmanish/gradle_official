@@ -146,6 +146,9 @@ dependencies {
         api(libs.minlog)                { version { strictly("1.2") }}
         api(libs.nativePlatform)        { version { strictly(nativePlatformVersion) }}
         api(libs.objenesis)             { version { strictly("2.6") }}
+        api(libs.opentelemetryApi)      { version { strictly("1.43.0") }}
+        api(libs.opentelemetrySdk)        { version { strictly("1.43.0") }}
+        api(libs.opentelemetryExporterOtlp) { version { strictly("1.43.0") }}
         api(libs.plexusCipher)          { version { strictly("2.0"); because("transitive dependency of Maven modules to process POM metadata") }}
         api(libs.plexusInterpolation)   { version { strictly("1.26"); because("transitive dependency of Maven modules to process POM metadata") }}
         api(libs.plexusClassworlds)     { version { strictly("2.7.0"); because("transitive dependency of Maven modules to process POM metadata") }}

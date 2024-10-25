@@ -36,6 +36,9 @@ dependencies {
     implementation(projects.serviceLookup)
     implementation(projects.core)
     implementation(projects.daemonProtocol)
+
+    implementation(libs.opentelemetrySdk)
+    implementation(libs.opentelemetryExporterOtlp)
 }
 tasks.isolatedProjectsIntegTest {
     enabled = false

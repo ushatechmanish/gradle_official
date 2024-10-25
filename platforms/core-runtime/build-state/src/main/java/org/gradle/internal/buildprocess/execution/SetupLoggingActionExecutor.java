@@ -32,7 +32,10 @@ public class SetupLoggingActionExecutor implements BuildExecutor {
     private final BuildActionExecutor<BuildActionParameters, BuildRequestContext> delegate;
     private final LoggingManagerInternal loggingManager;
 
-    public SetupLoggingActionExecutor(LoggingManagerInternal loggingManager, BuildActionExecutor<BuildActionParameters, BuildRequestContext> delegate) {
+    public SetupLoggingActionExecutor(
+        LoggingManagerInternal loggingManager,
+        BuildActionExecutor<BuildActionParameters, BuildRequestContext> delegate
+    ) {
         this.loggingManager = loggingManager;
         this.delegate = delegate;
     }

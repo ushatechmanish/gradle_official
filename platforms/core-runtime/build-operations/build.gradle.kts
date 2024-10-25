@@ -12,6 +12,7 @@ dependencies {
     api(projects.stdlibJavaExtensions)
 
     implementation(libs.slf4jApi)
+    implementation(libs.opentelemetryApi)
 
     testFixturesImplementation(libs.guava)
 }

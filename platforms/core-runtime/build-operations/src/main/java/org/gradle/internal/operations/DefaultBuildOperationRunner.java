@@ -16,6 +16,9 @@
 
 package org.gradle.internal.operations;
 
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +62,15 @@ public class DefaultBuildOperationRunner implements BuildOperationRunner {
         execute(buildOperation.description(), defaultParent, new BuildOperationExecution<O>() {
             @Override
             public O execute(BuildOperationDescriptor descriptor, BuildOperationState operationState, @Nullable BuildOperationState parent, ReadableBuildOperationContext context, BuildOperationExecutionListener listener) {
+//                SpanContext parent = SpanContext.createFromRemoteParent(
+//                    Configuration
+//                )
+
+//                Span span = GlobalOpenTelemetry
+//                    .getTracer(DefaultBuildOperationRunner.class.getName())
+//                    .spanBuilder(buildOperation.getClass().getName())
+//                    .setParent()
+//                    .startSpan();
                 try {
                     listener.start(descriptor, operationState);
                     Throwable failure = null;
@@ -77,6 +89,7 @@ public class DefaultBuildOperationRunner implements BuildOperationRunner {
                     return buildOperation;
                 } finally {
                     listener.close(descriptor, operationState);
+//                    span.end();
                 }
             }
         });

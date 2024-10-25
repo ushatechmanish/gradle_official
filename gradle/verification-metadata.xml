@@ -134,6 +134,7 @@
          <trusted-key id="36390DE6A0E61EE4C7B4BA02C1D3063467F1EBD1" group="org.asciidoctor"/>
          <trusted-key id="3872ED7D5904493D23D78FA2C4C8CB73B1435348" group="^com[.]android[.]tools($|([.].*))" regex="true"/>
          <trusted-key id="3CAC6E7DC43343FF75ECBAC27E6EB7BB6A7712DC" group="net.sourceforge.nekohtml" name="nekohtml"/>
+         <trusted-key id="3F05DDA9F317301E927136D417A27CE7A60FF5F0" group="io.opentelemetry"/>
          <trusted-key id="4008F9DFF7DBC968F35F9E712642156411CCE8B3" group="com.vladsch.flexmark"/>
          <trusted-key id="416952B945B78A34C6C7678562EBFC78FE4156D1" group="org.jruby"/>
          <trusted-key id="47063E8BA7A6450E4A52E7AE466CAED6E0747D50">
@@ -241,6 +242,7 @@
          <trusted-key id="A55830120AED177E1AA4F66A431B8F80403A7DC1" group="com.github.javaparser"/>
          <trusted-key id="A5BD02B93E7A40482EB1D66A5F69AD087600B22C" group="org.ow2.asm"/>
          <trusted-key id="A602970FE1BF5C9C8A9491B97A3C9FE21DFDBF44" group="org.apache.pdfbox"/>
+         <trusted-key id="A6D6C97108B8585F91B158748671A8DF71296252" group="^com[.]squareup($|([.].*))" regex="true"/>
          <trusted-key id="A7892505CF1A58076453E52D7999BEFBA1039E8B" group="net.bytebuddy"/>
          <trusted-key id="AA417737BD805456DB3CBDDE6601E5C08DCCBB96" group="info.picocli"/>
          <trusted-key id="ACF39CCDED38E2C6F0898BF28F7F6C0451967B84" group="org.scala-lang"/>
@@ -1438,6 +1440,11 @@
             <pgp value="CFBE6E7934FB211224EE1C2B0C0A9468268C79AE"/>
          </artifact>
       </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-reflect" version="2.0.0">
+         <artifact name="kotlin-reflect-2.0.0.jar">
+            <sha256 value="111bd906921937f76da17760641116d04b57a7a12fcf980efe7c6767f45179f0" origin="Verified" reason="No asc file on plugins.gradle.org"/>
+         </artifact>
+      </component>
       <component group="org.jetbrains.kotlin" name="kotlin-scripting-compiler-impl-embeddable" version="1.6.21">
          <artifact name="kotlin-scripting-compiler-impl-embeddable-1.6.21.jar">
             <sha256 value="e4044b8de01e84633923706f43cda80d37d8bbef8ce9a866f9d95962ddd20480" reason="Artifact is not signed"/>
@@ -1446,11 +1453,6 @@
       <component group="org.jetbrains.kotlin" name="kotlin-stdlib" version="2.0.0">
          <artifact name="kotlin-stdlib-2.0.0-all.jar">
             <sha256 value="30e05222bc067fffb896a3276b5f1e3f29450bf1d9461d27a19ce0efc793b5cd" origin="Verified" reason="No asc file on plugins.gradle.org"/>
-         </artifact>
-      </component>
-      <component group="org.jetbrains.kotlin" name="kotlin-reflect" version="2.0.0">
-         <artifact name="kotlin-reflect-2.0.0.jar">
-            <sha256 value="111bd906921937f76da17760641116d04b57a7a12fcf980efe7c6767f45179f0" origin="Verified" reason="No asc file on plugins.gradle.org"/>
          </artifact>
       </component>
       <component group="org.jetbrains.kotlin" name="kotlin-stdlib-jdk7" version="1.6.21">

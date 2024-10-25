@@ -16,6 +16,16 @@
 package org.gradle.launcher.daemon.bootstrap;
 
 import com.google.common.io.Files;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter;
+import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.resources.Resource;
+import io.opentelemetry.sdk.trace.SdkTracerProvider;
+import io.opentelemetry.sdk.trace.SpanProcessor;
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
+import io.opentelemetry.sdk.trace.export.SpanExporter;
 import org.gradle.api.UncheckedIOException;
 import org.gradle.api.logging.LogLevel;
 import org.gradle.api.logging.Logger;
@@ -54,6 +64,7 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The entry point for a daemon process.
@@ -135,10 +146,12 @@ public class DaemonMain extends EntryPoint {
 
         try {
             DaemonContext daemonContext = daemonServices.get(DaemonContext.class);
+            OpenTelemetry telemetry = initializeTracing(daemonContext);
             Long pid = daemonContext.getPid();
             daemonStarted(pid, daemon.getUid(), daemon.getAddress(), daemonLog);
             DaemonExpirationStrategy expirationStrategy = daemonServices.get(MasterExpirationStrategy.class);
             DaemonStopState stopState = daemon.stopOnExpiration(expirationStrategy, parameters.getPeriodicCheckIntervalMs());
+            ((SdkTracerProvider)telemetry.getTracerProvider()).shutdown().join(5000, TimeUnit.MILLISECONDS);
             daemonProcessState.stopped(stopState);
         } finally {
             CompositeStoppable.stoppable(daemon, daemonProcessState).stop();
@@ -161,6 +174,31 @@ public class DaemonMain extends EntryPoint {
             originalOut = null;
             originalErr = null;
         }
+    }
+
+    protected OpenTelemetry initializeTracing(DaemonContext context) {
+        // Configure the endpoint correctly for your Jaeger HTTP receiver
+        SpanExporter exporter = OtlpHttpSpanExporter.getDefault();
+        SpanProcessor spanProcessor = SimpleSpanProcessor.create(exporter);
+
+        // Define the resource
+        Resource resource = Resource.create(
+                Attributes.builder()
+                        .put(AttributeKey.stringKey("service.name"), "Gradle")
+                        .put(AttributeKey.stringKey("daemon.uid"), context.getUid())
+                        .put(AttributeKey.stringKey("daemon.pid"), context.getPid().toString())
+                        .build()
+        );
+
+        // Set up the SDK with the exporter, processor, and resource
+        SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
+                .addSpanProcessor(spanProcessor)
+                .setResource(resource)
+                .build();
+        return OpenTelemetrySdk.builder()
+                .setTracerProvider(tracerProvider)
+                .buildAndRegisterGlobal();
+
     }
 
     protected void initialiseLogging(LoggingManagerInternal loggingManager, File daemonLog) {
