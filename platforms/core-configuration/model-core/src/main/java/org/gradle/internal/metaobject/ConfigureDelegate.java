@@ -98,7 +98,6 @@ public class ConfigureDelegate extends GroovyObjectSupport {
         if (result.isFound()) {
             return;
         }
-
         throw _delegate.setMissingProperty(property);
     }
 

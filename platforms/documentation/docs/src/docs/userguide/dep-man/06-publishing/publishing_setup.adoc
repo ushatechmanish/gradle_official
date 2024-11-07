@@ -98,7 +98,7 @@ This publication consists of just the production JAR artifact and its metadata, 
 
 NOTE: Components are the standard way of defining a publication. They are provided by plugins, usually of the language or platform variety. For example, the Java Plugin defines the `components.java` link:{javadocPath}/org/gradle/api/component/SoftwareComponent.html[SoftwareComponent], while the War Plugin defines `components.web`.
 
-The example also defines a file-based Maven repository with the name "myRepo". Such a file-based repository is convenient for a sample, but real-world builds typically work with HTTPS-based repository servers, such as Maven Central or an internal company server.
+The example also defines a file-based Maven repository with the name = "myRepo". Such a file-based repository is convenient for a sample, but real-world builds typically work with HTTPS-based repository servers, such as Maven Central or an internal company server.
 
 NOTE: You may define one, and only one, repository without a name. This translates to an implicit name of "Maven" for Maven repositories and "Ivy" for Ivy repositories. All other repository definitions must be given an explicit name.
 

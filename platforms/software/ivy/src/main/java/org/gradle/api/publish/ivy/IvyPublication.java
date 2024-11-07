@@ -81,9 +81,9 @@ import org.gradle.internal.instrumentation.api.annotations.ReplacesEagerProperty
  *     myPublication(IvyPublication) {
  *       from components.java
  *       artifact(sourceJar) {
- *         type "source"
- *         extension "src.jar"
- *         conf "runtime"
+ *         type = "source"
+ *         extension = "src.jar"
+ *         conf = "runtime"
  *       }
  *       descriptor {
  *         license {
@@ -259,13 +259,13 @@ public interface IvyPublication extends Publication {
      *     ivy(IvyPublication) {
      *       artifact(sourceJar) {
      *         // These values will be used instead of the values from the task. The task values will not be updated.
-     *         classifier "src"
-     *         extension "zip"
-     *         conf "runtime-&gt;default"
+     *         classifier = "src"
+     *         extension = "zip"
+     *         conf = "runtime-&gt;default"
      *       }
      *       artifact("my-docs-file.htm") {
-     *         type "documentation"
-     *         extension "html"
+     *         type = "documentation"
+     *         extension = "html"
      *         builtBy genDocs
      *       }
      *     }
