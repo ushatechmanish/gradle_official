@@ -33,7 +33,7 @@ class CiEnvironmentProvider(private val test: Test) : CommandLineArgumentProvide
 
     override fun asArguments(): Iterable<String> {
         return if (BuildEnvironment.isCiServer) {
-            getRepoMirrorSystemProperties() +
+            val ret = getRepoMirrorSystemProperties() +
                 getToolchainInstallationPathsProperty() +
                 mapOf(
                     "org.gradle.test.maxParallelForks" to test.maxParallelForks,
@@ -42,6 +42,9 @@ class CiEnvironmentProvider(private val test: Test) : CommandLineArgumentProvide
                 ).map {
                     "-D${it.key}=${it.value}"
                 }
+
+            print("CI Environment: $ret")
+            ret
         } else {
             listOf()
         }
