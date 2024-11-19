@@ -295,6 +295,8 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
             throw new RuntimeException("boom")
         """
 
+        println "Fuck: ${System.getProperty("org.gradle.java.installations.paths")}"
+
         given:
         def listener = new ProblemProgressListener()
 
