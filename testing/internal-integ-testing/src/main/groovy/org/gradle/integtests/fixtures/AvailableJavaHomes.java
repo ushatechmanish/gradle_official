@@ -359,6 +359,7 @@ public abstract class AvailableJavaHomes {
             .sorted(Comparator.comparing(JvmInstallationMetadata::getDisplayName).thenComparing(JvmInstallationMetadata::getLanguageVersion))
             .collect(Collectors.toList());
 
+        System.out.println("installationPaths: " + System.getProperty(JAVA_INSTALLATIONS_PATHS_PROPERTY));
         System.out.println("Found the following JVMs:");
         for (JvmInstallationMetadata jvm : jvms) {
             String name = jvm.getDisplayName() + " " + jvm.getJavaVersion() + " ";
