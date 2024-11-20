@@ -23,7 +23,6 @@ import org.gradle.api.internal.DocumentationRegistry
 import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.MutationGuard
 import org.gradle.api.internal.MutationGuards
-import org.gradle.api.internal.StartParameterInternal
 import org.gradle.api.internal.collections.DefaultDomainObjectCollectionFactory
 import org.gradle.api.internal.collections.DomainObjectCollectionFactory
 import org.gradle.api.internal.file.DefaultFilePropertyFactory
@@ -42,18 +41,16 @@ import org.gradle.api.internal.tasks.DefaultTaskDependencyFactory
 import org.gradle.api.internal.tasks.TaskDependencyFactory
 import org.gradle.api.internal.tasks.properties.annotations.OutputPropertyRoleAnnotationHandler
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.problems.Problem
 import org.gradle.api.problems.ProblemReporter
+import org.gradle.api.problems.deprecation.DeprecationReporter
+import org.gradle.api.problems.internal.AdditionalDataBuilderFactory
 import org.gradle.api.problems.internal.DefaultProblems
 import org.gradle.api.problems.internal.ExceptionProblemRegistry
-import org.gradle.api.problems.internal.InternalProblem
-import org.gradle.api.problems.internal.InternalProblemBuilder
 import org.gradle.api.problems.internal.InternalProblemReporter
 import org.gradle.api.problems.internal.InternalProblems
+import org.gradle.api.problems.internal.Problem
 import org.gradle.api.problems.internal.ProblemSummarizer
-import org.gradle.api.problems.internal.ProblemsInfrastructure
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.api.reflect.ObjectInstantiationException
 import org.gradle.api.tasks.util.internal.PatternSets
 import org.gradle.cache.internal.TestCrossBuildInMemoryCacheFactory
 import org.gradle.internal.hash.ChecksumService
@@ -66,16 +63,12 @@ import org.gradle.internal.model.CalculatedValueContainerFactory
 import org.gradle.internal.model.InMemoryCacheFactory
 import org.gradle.internal.model.StateTransitionControllerFactory
 import org.gradle.internal.operations.CurrentBuildOperationRef
-import org.gradle.internal.operations.DefaultBuildOperationsParameters
 import org.gradle.internal.operations.OperationIdentifier
-import org.gradle.internal.operations.TestBuildOperationRunner
-import org.gradle.internal.reflect.Instantiator
 import org.gradle.internal.service.DefaultServiceRegistry
 import org.gradle.internal.service.Provides
 import org.gradle.internal.service.ServiceRegistration
 import org.gradle.internal.service.ServiceRegistrationProvider
 import org.gradle.internal.service.ServiceRegistry
-import org.gradle.internal.service.scopes.CrossBuildSessionParameters
 import org.gradle.internal.state.ManagedFactoryRegistry
 import org.gradle.internal.work.DefaultWorkerLimits
 import org.gradle.test.fixtures.file.TestDirectoryProvider
@@ -171,8 +164,7 @@ class TestUtil {
     }
 
     static StateTransitionControllerFactory stateTransitionControllerFactory() {
-        def buildOperationsParameters = new DefaultBuildOperationsParameters(new CrossBuildSessionParameters(new StartParameterInternal()))
-        return new StateTransitionControllerFactory(new TestWorkerLeaseService(), buildOperationsParameters, new TestBuildOperationRunner())
+        return new StateTransitionControllerFactory(new TestWorkerLeaseService())
     }
 
     private static ServiceRegistry createServices(FileResolver fileResolver, FileCollectionFactory fileCollectionFactory, Action<ServiceRegistration> registrations = {}) {
@@ -205,16 +197,7 @@ class TestUtil {
                 @Provides
                 ProjectLayout createProjectLayout() {
                     def filePropertyFactory = new DefaultFilePropertyFactory(PropertyHost.NO_OP, fileResolver, fileCollectionFactory)
-                    return new DefaultProjectLayout(
-                        fileResolver.resolve("."),
-                        fileResolver.resolve("."),
-                        fileResolver,
-                        DefaultTaskDependencyFactory.withNoAssociatedProject(),
-                        PatternSets.getNonCachingPatternSetFactory(),
-                        PropertyHost.NO_OP,
-                        fileCollectionFactory,
-                        filePropertyFactory,
-                        filePropertyFactory)
+                    return new DefaultProjectLayout(fileResolver.resolve("."), fileResolver, DefaultTaskDependencyFactory.withNoAssociatedProject(), PatternSets.getNonCachingPatternSetFactory(), PropertyHost.NO_OP, fileCollectionFactory, filePropertyFactory, filePropertyFactory)
                 }
 
                 @Provides
@@ -385,14 +368,6 @@ interface TestClosure {
     Object call(Object param);
 }
 
-class MockInstantiator implements Instantiator {
-
-    @Override
-    def <T> T newInstance(Class<? extends T> type, Object... parameters) throws ObjectInstantiationException {
-        return null
-    }
-}
-
 class TestProblems implements InternalProblems {
     private final TestProblemSummarizer summarizer
     private final InternalProblems delegate
@@ -404,10 +379,6 @@ class TestProblems implements InternalProblems {
             null,
             new TestCurrentBuildOperationRef(),
             new ExceptionProblemRegistry(),
-            null,
-            new MockInstantiator(),
-            null,
-            null,
             null
         )
     }
@@ -423,13 +394,13 @@ class TestProblems implements InternalProblems {
     }
 
     @Override
-    ProblemsInfrastructure getInfrastructure() {
-        return delegate.getInfrastructure()
+    DeprecationReporter getDeprecationReporter() {
+        delegate.deprecationReporter
     }
 
     @Override
-    InternalProblemBuilder getProblemBuilder() {
-        delegate.getProblemBuilder()
+    AdditionalDataBuilderFactory getAdditionalDataBuilderFactory() {
+        delegate.additionalDataBuilderFactory
     }
 
     void assertProblemEmittedOnce(Object expectedProblem) {
@@ -457,7 +428,7 @@ class TestProblemSummarizer implements ProblemSummarizer {
     List emitted = []
 
     @Override
-    void emit(InternalProblem problem, @Nullable OperationIdentifier id) {
+    void emit(Problem problem, @Nullable OperationIdentifier id) {
         emitted.add(problem)
     }
 
