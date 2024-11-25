@@ -78,6 +78,8 @@ import org.gradle.launcher.exec.ChainingBuildActionRunner;
 import org.gradle.launcher.exec.RootBuildLifecycleBuildActionExecutor;
 import org.gradle.launcher.exec.RunAsBuildOperationBuildActionExecutor;
 import org.gradle.launcher.exec.RunAsWorkerThreadBuildActionExecutor;
+import org.gradle.observability.ObservabilityServices;
+import org.gradle.observability.otel.OpenTelemetryListener;
 import org.gradle.problems.buildtree.ProblemDiagnosticsFactory;
 import org.gradle.problems.buildtree.ProblemReporter;
 import org.gradle.problems.buildtree.ProblemStream;
@@ -93,6 +95,7 @@ public class LauncherServices extends AbstractGradleModuleServices {
     public void registerGlobalServices(ServiceRegistration registration) {
         registration.add(BuildActionRunner.class, ExecuteBuildActionRunner.class);
         registration.addProvider(new ToolingGlobalScopeServices());
+        registration.addProvider(new ObservabilityServices());
     }
 
     @Override
@@ -137,8 +140,11 @@ public class LauncherServices extends AbstractGradleModuleServices {
             FileSystem fileSystem,
             BuildLifecycleAwareVirtualFileSystem virtualFileSystem,
             ValueSnapshotter valueSnapshotter,
-            ExceptionProblemRegistry problemContainer
+            ExceptionProblemRegistry problemContainer,
+            OpenTelemetryListener openTelemetryListener
         ) {
+            openTelemetryListener.register(buildOperationListenerManager);
+
             CaseSensitivity caseSensitivity = fileSystem.isCaseSensitive() ? CASE_SENSITIVE : CASE_INSENSITIVE;
             return new SubscribableBuildActionExecutor(
                 listenerManager,

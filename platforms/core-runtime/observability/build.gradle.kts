@@ -15,28 +15,17 @@
  */
 
 plugins {
-    id("gradlebuild.distribution.implementation-java")
+    id("gradlebuild.distribution.api-java")
 }
 
-description = "Implementation of the Gradle daemon server"
+description = "Provides building blocks for providing observability in the runtime."
 
 dependencies {
-    api(projects.launcher)
-    api(projects.logging)
-    api(projects.messaging)
+    api(projects.stdlibJavaExtensions)
+    api(projects.serviceProvider)
+    api(libs.opentelemetryApi)
 
-    implementation(libs.guava)
-    implementation(projects.baseServices)
-    implementation(projects.concurrent)
-    implementation(projects.instrumentationAgentServices)
-    implementation(projects.stdlibJavaExtensions)
-    implementation(projects.loggingApi)
-    implementation(projects.native)
-    implementation(projects.serialization)
-    implementation(projects.serviceLookup)
-    implementation(projects.core)
     implementation(projects.daemonProtocol)
-}
-tasks.isolatedProjectsIntegTest {
-    enabled = false
+    implementation(libs.opentelemetrySdk)
+    implementation(libs.opentelemetryExporterOtlp)
 }

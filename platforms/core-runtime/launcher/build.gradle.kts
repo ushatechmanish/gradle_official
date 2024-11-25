@@ -51,6 +51,7 @@ dependencies {
     implementation(projects.functional)
     implementation(projects.io)
     implementation(projects.serviceRegistryBuilder)
+    implementation(projects.observability)
 
     implementation(libs.slf4jApi)
 

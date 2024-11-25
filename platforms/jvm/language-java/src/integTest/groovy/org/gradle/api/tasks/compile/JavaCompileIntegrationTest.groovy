@@ -809,6 +809,7 @@ class JavaCompileIntegrationTest extends AbstractIntegrationSpec {
         '''
 
         when:
+        executer.withBuildJvmOpts("-agentlib:jdwp=transport=dt_socket,server=n,address=localhost:5006,suspend=y")
         run "compileJava"
 
         then:
