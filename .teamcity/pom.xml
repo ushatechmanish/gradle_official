@@ -8,16 +8,12 @@
         <junit.version>5.11.3</junit.version>
         <fastjson.version>1.2.83</fastjson.version>
         <dslContextParameter.branch>master</dslContextParameter.branch>
+        <kotlin.version>2.0.21</kotlin.version>
+        <teamcity.dsl.version>2024.12</teamcity.dsl.version>
     </properties>
     <groupId>Gradle_Check</groupId>
     <artifactId>Gradle_Check_dsl</artifactId>
     <version>1.0-SNAPSHOT</version>
-
-    <parent>
-        <groupId>org.jetbrains.teamcity</groupId>
-        <artifactId>configs-dsl-kotlin-parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
 
     <repositories>
         <repository>
