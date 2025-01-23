@@ -18,7 +18,7 @@ class CompileAll(model: CIBuildModel, stage: Stage) : OsAwareBaseGradleBuildType
     applyDefaults(
         model,
         this,
-        "compileAllBuild -PignoreIncomingBuildReceipt=true -DdisableLocalCache=true",
+        "compileAllBuild -PignoreIncomingBuildReceipt=true -DdisableLocalCache=true --no-build-cache",
         extraParameters = listOf(
             stage.getBuildScanCustomValueParam(),
             buildScanTagParam("CompileAll"),
