@@ -83,9 +83,6 @@ fun Requirements.requiresEc2Agent() {
 }
 
 fun Requirements.requiresNotEc2Agent() {
-    doesNotContain("teamcity.agent.name", "ec2")
-    // US region agents have name "EC2-XXX"
-    doesNotContain("teamcity.agent.name", "EC2")
 }
 
 /**
