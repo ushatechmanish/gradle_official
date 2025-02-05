@@ -32,7 +32,7 @@ public interface InternalProblem extends Problem {
     /**
      * Returns a problem builder with fields initialized with values from this instance.
      */
-    InternalProblemBuilder toBuilder(AdditionalDataBuilderFactory additionalDataBuilderFactory, Instantiator instantiator, PayloadSerializer payloadSerializer, IsolatableFactory isolatbleFactory);
+    InternalProblemBuilder toBuilder(AdditionalDataBuilderFactory additionalDataBuilderFactory, Instantiator instantiator, PayloadSerializer payloadSerializer, IsolatableFactory isolatbleFactory, NewIsolatableSerializer isolatableSerializer);
 
     /**
      * Returns the problem definition, i.e. the data that is independent of the report context.

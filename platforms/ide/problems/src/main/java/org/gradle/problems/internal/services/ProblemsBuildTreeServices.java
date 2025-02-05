@@ -70,8 +70,8 @@ public class ProblemsBuildTreeServices implements ServiceRegistrationProvider {
             exceptionAnalyser,
             instantiator,
             payloadSerializer,
-            isolatableFactory
-        );
+            isolatableFactory,
+            null);
     }
 
     @Provides

@@ -51,6 +51,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class DefaultProblemBuilder implements InternalProblemBuilder {
+    private final NewIsolatableSerializer isolatableSerializer;
     @Nullable
     private ProblemStream problemStream;
 
@@ -71,22 +72,23 @@ public class DefaultProblemBuilder implements InternalProblemBuilder {
     private final IsolatableFactory isolatableFactory;
     private ProblemDiagnostics diagnostics;
 
-    public DefaultProblemBuilder(AdditionalDataBuilderFactory additionalDataBuilderFactory, Instantiator instantiator, PayloadSerializer payloadSerializer, IsolatableFactory isolatableFactory) {
+    public DefaultProblemBuilder(AdditionalDataBuilderFactory additionalDataBuilderFactory, Instantiator instantiator, PayloadSerializer payloadSerializer, IsolatableFactory isolatableFactory, NewIsolatableSerializer isolatableSerializer) {
         this.additionalDataBuilderFactory = additionalDataBuilderFactory;
         this.instantiator = instantiator;
         this.payloadSerializer = payloadSerializer;
         this.isolatableFactory = isolatableFactory;
+        this.isolatableSerializer = isolatableSerializer;
         this.additionalData = null;
         this.solutions = new ArrayList<String>();
     }
 
-    public DefaultProblemBuilder(@Nullable ProblemStream problemStream, AdditionalDataBuilderFactory additionalDataBuilderFactory, Instantiator instantiator, PayloadSerializer payloadSerializer, IsolatableFactory isolatableFactory) {
-        this(additionalDataBuilderFactory, instantiator, payloadSerializer, isolatableFactory);
+    public DefaultProblemBuilder(@Nullable ProblemStream problemStream, AdditionalDataBuilderFactory additionalDataBuilderFactory, Instantiator instantiator, PayloadSerializer payloadSerializer, IsolatableFactory isolatableFactory, NewIsolatableSerializer isolatableSerializer) {
+        this(additionalDataBuilderFactory, instantiator, payloadSerializer, isolatableFactory, isolatableSerializer);
         this.problemStream = problemStream;
     }
 
-    public DefaultProblemBuilder(InternalProblem problem, AdditionalDataBuilderFactory additionalDataBuilderFactory, Instantiator instantiator, PayloadSerializer payloadSerializer, IsolatableFactory isolatableFactory) {
-        this(additionalDataBuilderFactory, instantiator, payloadSerializer, isolatableFactory);
+    public DefaultProblemBuilder(InternalProblem problem, AdditionalDataBuilderFactory additionalDataBuilderFactory, Instantiator instantiator, PayloadSerializer payloadSerializer, IsolatableFactory isolatableFactory, NewIsolatableSerializer isolatableSerializer) {
+        this(additionalDataBuilderFactory, instantiator, payloadSerializer, isolatableFactory, isolatableSerializer);
         this.id = problem.getDefinition().getId();
         this.contextualLabel = problem.getContextualLabel();
         this.solutions = new ArrayList<String>(problem.getSolutions());
@@ -351,15 +353,16 @@ public class DefaultProblemBuilder implements InternalProblemBuilder {
 
     @Override
     public <T extends AdditionalData> InternalProblemBuilder additionalData(Class<T> type, Action<? super T> config) {
-        validateMethods(type);
+//        validateMethods(type);
 
         AdditionalData additionalDataInstance = createAdditionalData(type, config);
         Map<String, Object> methodValues = getAdditionalDataMap(type, additionalDataInstance);
         Isolatable<AdditionalData> isolated = isolatableFactory.isolate(additionalDataInstance);
 
-        SerializedPayload payload = getPayloadSerializer().serialize(type);
+        SerializedPayload serializedBaseClass = getPayloadSerializer().serialize(type);
+        byte[] serialized = this.isolatableSerializer.serialize(isolated);
 
-        this.additionalData = new DefaultTypedAdditionalData(payload, isolated);
+        this.additionalData = new DefaultTypedAdditionalData(serializedBaseClass, serialized);
 //        this.additionalData = ;
         return this;
     }

@@ -31,15 +31,7 @@ class WorkerExecutorProblemsApiIntegrationTest extends AbstractIntegrationSpec {
     // We will use this to verify if the problem was reported in the correct build operation
     def buildOperationIdFile = file('build-operation-id.txt')
 
-    def forkingOptions(Jvm javaVersion) {
-        return """
-            options.fork = true
-            // We don't use toolchains here for consistency with the rest of the test suite
-            options.forkOptions.javaHome = file('${javaVersion.javaHome}')
-        """
-    }
-
-    def setupBuild(Jvm javaVersion) {
+    def setupBuild() {
         file('buildSrc/build.gradle') << """
             plugins {
                 id 'java'
@@ -47,10 +39,6 @@ class WorkerExecutorProblemsApiIntegrationTest extends AbstractIntegrationSpec {
 
             dependencies {
                 implementation(gradleApi())
-            }
-
-            tasks.withType(JavaCompile) {
-                ${javaVersion == null ? '' : forkingOptions(javaVersion)}
             }
         """
         file('buildSrc/src/main/java/org/gradle/test/ProblemsWorkerTaskParameter.java') << """
@@ -119,7 +107,7 @@ class WorkerExecutorProblemsApiIntegrationTest extends AbstractIntegrationSpec {
     }
 
     def "problems are emitted correctly from a worker when using #isolationMode"() {
-        setupBuild(null)
+        setupBuild()
         enableProblemsApiCheck()
 
         given:

@@ -39,4 +39,6 @@ public interface InternalProblems extends Problems {
     InternalProblemBuilder getProblemBuilder();
 
     IsolatableFactory getIsolatableFactory();
+
+    NewIsolatableSerializer getIsolatableSerializer();
 }

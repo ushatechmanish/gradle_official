@@ -14,26 +14,13 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems.internal;
+package org.gradle.process.internal.worker.request;
 
-import org.gradle.api.Incubating;
-import org.gradle.api.problems.AdditionalData;
+import org.gradle.internal.exceptions.Contextual;
 
-/**
- * General additional data type that can be used to attach arbitrary data to a problem with a string map.
- *
- * @since 8.13
- */
-@Incubating
-public interface TypedAdditionalData extends AdditionalData {
-
-    byte[] getIsolated();
-
-    /**
-     * the serialized type/class of the object
-     *
-     * @return the data
-     * @since 8.13
-     */
-    Object getSerializedType();
+@Contextual
+class WorkSerializationException extends RuntimeException {
+    WorkSerializationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
