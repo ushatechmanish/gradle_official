@@ -114,7 +114,6 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
         this.workerImplementationName = workerImplementation.getName();
     }
 
-
     public static class ProblemsServiceProvider implements ServiceRegistrationProvider {
 
         private final InstantiatorFactory instantiatorFactory;
@@ -128,7 +127,6 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
         void configure(ServiceRegistration serviceRegistration) {
             serviceRegistration.add(FileLookup.class, DefaultFileLookup.class);
             serviceRegistration.add(FilePropertyFactory.class, FileFactory.class, DefaultFilePropertyFactory.class);
-//            serviceRegistration.addProvider(new MessagingServices());
         }
 
         @Provides
@@ -250,17 +248,6 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
         NamedObjectInstantiator createNamedObjectInstantiator(CrossBuildInMemoryCacheFactory cacheFactory) {
             return new NamedObjectInstantiator(cacheFactory);
         }
-
-//
-//        @Provides
-//        CrossBuildInMemoryCacheFactory createCrossBuildInMemoryCacheFactory(ListenerManager listenerManager) {
-//            return new DefaultCrossBuildInMemoryCacheFactory(listenerManager);
-//        }
-
-//        @Provides
-//        NamedObjectInstantiator createNamedObjectInstantiator(CrossBuildInMemoryCacheFactory cacheFactory) {
-//            return new NamedObjectInstantiator(cacheFactory);
-//        }
 
         @Provides
         ManagedFactoryRegistry createManagedFactoryRegistry(NamedObjectInstantiator namedObjectInstantiator, InstantiatorFactory instantiatorFactory, PropertyFactory propertyFactory, FileCollectionFactory fileCollectionFactory, FileFactory fileFactory, FilePropertyFactory filePropertyFactory) {
