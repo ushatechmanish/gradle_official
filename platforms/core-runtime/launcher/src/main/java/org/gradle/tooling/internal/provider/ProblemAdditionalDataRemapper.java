@@ -21,6 +21,9 @@ import org.gradle.internal.build.event.types.DefaultInternalProxiedAdditionalDat
 import org.gradle.internal.build.event.types.DefaultProblemDetails;
 import org.gradle.internal.build.event.types.DefaultProblemEvent;
 import org.gradle.internal.classloader.ClassLoaderUtils;
+import org.gradle.internal.classloader.ClassLoaderVisitor;
+import org.gradle.internal.classloader.FilteringClassLoader;
+import org.gradle.internal.classloader.VisitableURLClassLoader;
 import org.gradle.internal.isolation.Isolatable;
 import org.gradle.internal.isolation.IsolatableFactory;
 import org.gradle.process.internal.worker.request.IsolatableSerializerRegistry;
@@ -33,6 +36,9 @@ import org.gradle.tooling.internal.provider.serialization.SerializedPayload;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
@@ -81,7 +87,29 @@ public class ProblemAdditionalDataRemapper implements BuildEventConsumer {
         }
 
         byte[] isolatableBytes = serializedAdditionalData.getIsolatable();
-        Object o = ClassLoaderUtils.executeInClassloader(type.getClassLoader(), () -> {
+
+
+//        new ClasspathInferer().getClassPathFor(type, classPath);
+
+
+        ClassLoader typeClassLoader = type.getClassLoader();
+        FilteringClassLoader.Spec filterSpec = new FilteringClassLoader.Spec();
+        filterSpec.allowClass(type);
+        FilteringClassLoader filteringClassLoader = new FilteringClassLoader(typeClassLoader, filterSpec);
+
+        List<URL> classPath = new ArrayList<>();
+
+        ((VisitableURLClassLoader) typeClassLoader).visit(new ClassLoaderVisitor() {
+            @Override
+            public void visitClassPath(URL[] urls) {
+                for (URL url : urls) {
+                    classPath.add(url);
+                }
+            }
+        });
+
+        VisitableURLClassLoader visitableURLClassLoader = new VisitableURLClassLoader("name", getClass().getClassLoader(), classPath);
+        Object o = ClassLoaderUtils.executeInClassloader(visitableURLClassLoader, () -> {
             Isolatable<?> deserialize = isolatableSerializerRegistry.deserialize(isolatableBytes);
             return deserialize.coerce(type);
         });

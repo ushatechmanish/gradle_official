@@ -86,12 +86,6 @@ public class ConnectionScopeServices implements ServiceRegistrationProvider {
         }, managedFactoryRegistry);
     }
 
-//    @Provides
-//    protected ManagedFactoryRegistry createManagedFactoryRegistry(NamedObjectInstantiator namedObjectInstantiator, InstantiatorFactory instantiatorFactory) {
-//
-//        return new DefaultManagedFactoryRegistry(null).withFactories(namedObjectInstantiator, instantiatorFactory.getManagedFactory());
-//    }
-
     @Provides
     IsolatableFactory createIsolatableFactory(
         ManagedFactoryRegistry managedFactoryRegistry
