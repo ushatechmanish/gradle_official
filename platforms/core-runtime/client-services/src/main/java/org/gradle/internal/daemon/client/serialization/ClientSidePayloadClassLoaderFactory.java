@@ -81,13 +81,13 @@ public class ClientSidePayloadClassLoaderFactory implements PayloadClassLoaderFa
 //        }
 
 
-//        @Override
-//        public Class<?> loadClass(String name) throws ClassNotFoundException {
-//            if (name.startsWith("org.gradle.api.provider.")) {
-//                return getParent().loadClass(name);
-//            }
-//            return super.loadClass(name);
-//        }
+        @Override
+        public Class<?> loadClass(String name) throws ClassNotFoundException {
+            if (name.startsWith("org.gradle.api.provider.")) {
+                return getParent().loadClass(name);
+            }
+            return super.loadClass(name);
+        }
 
 //        @Override
 //        @Nullable
