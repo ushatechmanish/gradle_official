@@ -262,6 +262,11 @@ public class ProviderConnection {
         shutdownCoordinator.stopStartedDaemons(requestSpecificLoggingServices, params.daemonParams.getBaseDir());
     }
 
+//    interface SomeData {
+//        Property<String> getName();
+//    }
+
+    //    @SuppressWarnings("unused")
     private Object run(
         BuildAction action, BuildCancellationToken cancellationToken,
         ProgressListenerConfiguration progressListenerConfiguration,
@@ -270,6 +275,9 @@ public class ProviderConnection {
         Parameters parameters
     ) {
         try {
+//            ObjectFactory objectFactory = sharedServices.get(ObjectFactory.class);
+//            SomeData someData = objectFactory.newInstance(SomeData.class);
+
             BuildActionExecutor<ConnectionOperationParameters, ClientBuildRequestContext> executor = createExecutor(providerParameters, parameters);
             boolean interactive = providerParameters.getStandardInput() != null;
             ClientBuildRequestContext context = new ClientBuildRequestContext(new GradleLauncherMetaData(), providerParameters.getStartTime(), interactive, cancellationToken, buildEventConsumer);

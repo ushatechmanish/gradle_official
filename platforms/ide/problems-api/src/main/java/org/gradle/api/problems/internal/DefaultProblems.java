@@ -29,11 +29,12 @@ import org.gradle.tooling.internal.provider.serialization.PayloadSerializer;
 import javax.annotation.Nonnull;
 
 @ServiceScope(Scope.BuildTree.class)
+@SuppressWarnings({"static", "StaticAssignmentInConstructor"})
 public class DefaultProblems implements InternalProblems {
 
     private final ProblemStream problemStream;
     private final CurrentBuildOperationRef currentBuildOperationRef;
-    private final ProblemSummarizer problemSummarizer;
+    public static ProblemSummarizer problemSummarizer;
     private final InternalProblemReporter internalReporter;
     private final AdditionalDataBuilderFactory additionalDataBuilderFactory = new AdditionalDataBuilderFactory();
     private final ExceptionProblemRegistry exceptionProblemRegistry;
@@ -54,7 +55,9 @@ public class DefaultProblems implements InternalProblems {
         IsolatableFactory isolatableFactory,
         NewIsolatableSerializer isolatableSerializer
     ) {
-        this.problemSummarizer = problemSummarizer;
+        if (DefaultProblems.problemSummarizer == null) {
+            DefaultProblems.problemSummarizer = problemSummarizer;
+        }
         this.problemStream = problemStream;
         this.currentBuildOperationRef = currentBuildOperationRef;
         this.exceptionProblemRegistry = exceptionProblemRegistry;
@@ -74,7 +77,7 @@ public class DefaultProblems implements InternalProblems {
     @Nonnull
     private DefaultProblemReporter createReporter() {
         return new DefaultProblemReporter(
-            problemSummarizer,
+            DefaultProblems.problemSummarizer,
             problemStream,
             currentBuildOperationRef,
             additionalDataBuilderFactory,

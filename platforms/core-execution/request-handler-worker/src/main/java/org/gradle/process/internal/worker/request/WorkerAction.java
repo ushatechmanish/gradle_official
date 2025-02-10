@@ -17,6 +17,9 @@
 package org.gradle.process.internal.worker.request;
 
 import org.gradle.api.Action;
+import org.gradle.api.internal.CollectionCallbackActionDecorator;
+import org.gradle.api.internal.MutationGuards;
+import org.gradle.api.internal.collections.DefaultDomainObjectCollectionFactory;
 import org.gradle.api.internal.collections.DomainObjectCollectionFactory;
 import org.gradle.api.internal.file.DefaultFileCollectionFactory;
 import org.gradle.api.internal.file.DefaultFileLookup;
@@ -61,7 +64,6 @@ import org.gradle.internal.event.DefaultListenerManager;
 import org.gradle.internal.event.ListenerManager;
 import org.gradle.internal.file.PathToFileResolver;
 import org.gradle.internal.hash.ClassLoaderHierarchyHasher;
-import org.gradle.internal.hash.HashCode;
 import org.gradle.internal.instantiation.InstantiatorFactory;
 import org.gradle.internal.instantiation.PropertyRoleAnnotationHandler;
 import org.gradle.internal.instantiation.generator.DefaultInstantiatorFactory;
@@ -89,7 +91,6 @@ import org.gradle.tooling.internal.provider.serialization.DefaultPayloadClassLoa
 import org.gradle.tooling.internal.provider.serialization.PayloadSerializer;
 import org.gradle.tooling.internal.provider.serialization.WellKnownClassLoaderRegistry;
 
-import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Collections;
@@ -98,16 +99,18 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
+import static java.util.Collections.emptyList;
+
 /**
  * Worker-side implementation of {@link RequestProtocol} executing actions.
  */
+@SuppressWarnings("unused")
 public class WorkerAction implements Action<WorkerProcessContext>, Serializable, RequestProtocol, StreamFailureHandler, Stoppable, StreamCompletion {
     private final String workerImplementationName;
     private transient CountDownLatch completed;
     private transient ResponseProtocol responder;
     private transient WorkerLogEventListener workerLogEventListener;
     private transient RequestHandler<Object, Object> implementation;
-    private transient InstantiatorFactory instantiatorFactory;
     private transient Exception failure;
 
     public WorkerAction(Class<?> workerImplementation) {
@@ -116,17 +119,25 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
 
     public static class ProblemsServiceProvider implements ServiceRegistrationProvider {
 
-        private final InstantiatorFactory instantiatorFactory;
+        //        private final InstantiatorFactory instantiatorFactory;
         private final ResponseProtocol responder;
 
         public ProblemsServiceProvider(ResponseProtocol responder, InstantiatorFactory instantiatorFactory) {
             this.responder = responder;
-            this.instantiatorFactory = instantiatorFactory;
+//            this.instantiatorFactory = instantiatorFactory;
         }
 
         void configure(ServiceRegistration serviceRegistration) {
             serviceRegistration.add(FileLookup.class, DefaultFileLookup.class);
             serviceRegistration.add(FilePropertyFactory.class, FileFactory.class, DefaultFilePropertyFactory.class);
+        }
+
+        @Provides
+        InstantiatorFactory createInstantiatorFactory() {
+            return new DefaultInstantiatorFactory(
+                new DefaultCrossBuildInMemoryCacheFactory(
+                    new DefaultListenerManager(Global.class)), emptyList(),
+                new OutputPropertyRoleAnnotationHandler(emptyList()));
         }
 
         @Provides
@@ -190,11 +201,8 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
 
         @Provides
         ClassLoaderHierarchyHasher createClassLoaderHierarchyHasher() {
-            return new ClassLoaderHierarchyHasher() {
-                @Override
-                public HashCode getClassLoaderHash(ClassLoader classLoader) {
-                    throw new UnsupportedOperationException();
-                }
+            return classLoader -> {
+                throw new UnsupportedOperationException();
             };
         }
 
@@ -268,20 +276,29 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
         }
 
         @Provides
-        InternalProblems createInternalProblems(PayloadSerializer payloadSerializer, IsolatableFactory isolatableFactory, IsolatableSerializerRegistry isolatableSerializerRegistry) {
+        InternalProblems createInternalProblems(PayloadSerializer payloadSerializer, ServiceRegistry serviceRegistry, IsolatableFactory isolatableFactory, IsolatableSerializerRegistry isolatableSerializerRegistry, InstantiatorFactory instantiatorFactory) {
             return new DefaultProblems(
                 new WorkerProblemEmitter(responder),
                 null,
                 CurrentBuildOperationRef.instance(),
                 new ExceptionProblemRegistry(),
                 null,
-                instantiatorFactory.decorateLenient(),
+                instantiatorFactory.decorate(serviceRegistry),
                 payloadSerializer,
                 isolatableFactory,
                 isolatableSerializerRegistry
             );
         }
 
+        @Provides
+        TaskDependencyFactory createTaskDependencyFactory() {
+            return DefaultTaskDependencyFactory.withNoAssociatedProject();
+        }
+
+        @Provides
+        DomainObjectCollectionFactory createDomainObjectCollectionFactory(InstantiatorFactory instantiatorFactory, ServiceRegistry services) {
+            return new DefaultDomainObjectCollectionFactory(instantiatorFactory, services, CollectionCallbackActionDecorator.NOOP, MutationGuards.identity());
+        }
     }
 
     @Override
@@ -291,7 +308,11 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
         ObjectConnection connection = workerProcessContext.getServerConnection();
         connection.addIncoming(RequestProtocol.class, this);
         responder = connection.addOutgoing(ResponseProtocol.class);
-        workerLogEventListener = workerProcessContext.getServiceRegistry().get(WorkerLogEventListener.class);
+        ServiceRegistry parentServices = workerProcessContext.getServiceRegistry();
+//        DefaultProblems internalProblems = (DefaultProblems) parentServices.get(InternalProblems.class);
+        DefaultProblems.problemSummarizer = new WorkerProblemEmitter(responder);
+
+        workerLogEventListener = parentServices.get(WorkerLogEventListener.class);
         RequestArgumentSerializers argumentSerializers = new RequestArgumentSerializers();
         try {
             ServiceRegistry parentServices = workerProcessContext.getServiceRegistry();
@@ -304,13 +325,14 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
                 .provider(registration -> {
                     // Make the argument serializers available so work implementations can register their own serializers
                     registration.add(RequestArgumentSerializers.class, argumentSerializers);
-                    registration.add(InstantiatorFactory.class, instantiatorFactory);
+//                    registration.add(InstantiatorFactory.class, instantiatorFactory);
                     // TODO we should inject a worker-api specific implementation of InternalProblems here
-                    registration.addProvider(new ProblemsServiceProvider(responder, instantiatorFactory));
+                    registration.addProvider(new ProblemsServiceProvider(responder, null));
                 })
                 .build();
+
             Class<?> workerImplementation = Class.forName(workerImplementationName);
-            implementation = Cast.uncheckedNonnullCast(instantiatorFactory.inject(serviceRegistry).newInstance(workerImplementation));
+            implementation = Cast.uncheckedNonnullCast(serviceRegistry.get(InstantiatorFactory.class).inject(serviceRegistry).newInstance(workerImplementation));
         } catch (Exception e) {
             failure = e;
         }
@@ -369,12 +391,7 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
                     // action will have the build operation associated.  By using the responder, we ensure that all
                     // messages arrive on the same incoming queue in the build process and the completed message will only
                     // arrive after all log messages have been processed.
-                    result = workerLogEventListener.withWorkerLoggingProtocol(responder, new Callable<Object>() {
-                        @Override
-                        public Object call() throws Exception {
-                            return implementation.run(request.getArg());
-                        }
-                    });
+                    result = workerLogEventListener.withWorkerLoggingProtocol(responder, () -> implementation.run(request.getArg()));
                 } catch (Throwable failure) {
                     if (failure instanceof NoClassDefFoundError) {
                         // Assume an infrastructure problem

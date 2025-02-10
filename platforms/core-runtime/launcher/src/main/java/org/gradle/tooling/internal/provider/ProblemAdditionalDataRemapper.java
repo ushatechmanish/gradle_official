@@ -74,6 +74,7 @@ public class ProblemAdditionalDataRemapper implements BuildEventConsumer {
         InternalPayloadSerializedAdditionalData serializedAdditionalData = (InternalPayloadSerializedAdditionalData) additionalData;
         SerializedPayload serializedType = (SerializedPayload) serializedAdditionalData.getSerializedType();
         Map<String, Object> state = serializedAdditionalData.getAsMap();
+
         Class<?> type = (Class<?>) payloadSerializer.deserialize(serializedType);
         if (type == null) {
             return;

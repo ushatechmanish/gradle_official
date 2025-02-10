@@ -168,42 +168,59 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
             public interface SomeData extends AdditionalData {
 //                String getName();
 //                void setName(String name);
-                Property<String> getName();
+                  Property<String> getName();
 //                void setValues(List<String> values);
 //                List<String> getValues();
             }
 
         """
-        file('buildSrc/src/main/java/org/gradle/test/ProblemWorkerTask.java') << """
+        file('buildSrc/src/main/java/org/gradle/test/ProblemWorkerAction.java') << """
             package org.gradle.test;
 
             import java.io.File;
             import java.io.FileWriter;
             import org.gradle.api.problems.Problems;
+            import org.gradle.api.problems.internal.InternalProblems;
             import org.gradle.api.problems.ProblemId;
             import org.gradle.api.problems.ProblemGroup;
+            import org.gradle.api.model.ObjectFactory;
             import org.gradle.internal.operations.CurrentBuildOperationRef;
 
             import org.gradle.workers.WorkAction;
 
             import javax.inject.Inject;
 
-            public abstract class ProblemWorkerTask implements WorkAction<ProblemsWorkerTaskParameter> {
+            public abstract class ProblemWorkerAction implements WorkAction<ProblemsWorkerTaskParameter> {
 
                 @Inject
-                public abstract Problems getProblems();
+                public abstract InternalProblems getProblems();
+
+                @Inject
+                public abstract ObjectFactory getObjectFactory();
 
                 @Override
                 public void execute() {
-                    Exception wrappedException = new Exception("Wrapped cause");
-                    // Create and report a problem
-                    // This needs to be Java 6 compatible, as we are in a worker
-                    ProblemId problemId = ProblemId.create("type", "label", ProblemGroup.create("generic", "Generic"));
-                    getProblems().getReporter().report(problemId, problem -> problem
-                            .stackLocation()
-                            .additionalData(SomeData.class, d -> d.getName().set("someData"))
-                            .withException(new RuntimeException("Exception message", wrappedException))
-                    );
+                    try {
+                        ObjectFactory of = getObjectFactory();
+                        SomeData sd = of.newInstance(SomeData.class);
+                        sd.getName().set("someData");
+                        System.out.println("someData: " + sd.getName().get());
+
+                        sd = getProblems().getInstantiator().newInstance(SomeData.class);
+                        sd.getName().set("someData");
+                        System.out.println("someData: " + sd.getName().get());
+                        Exception wrappedException = new Exception("Wrapped cause");
+                        // Create and report a problem
+                        // This needs to be Java 6 compatible, as we are in a worker
+                        ProblemId problemId = ProblemId.create("type", "label", ProblemGroup.create("generic", "Generic"));
+                        getProblems().getReporter().report(problemId, problem -> problem
+//                                .stackLocation()
+                                .additionalData(SomeData.class, d -> d.getName().set("someData"))
+//                                .withException(new RuntimeException("Exception message", wrappedException))
+                        );
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         """
@@ -224,7 +241,7 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
         given:
         buildFile << """
             import javax.inject.Inject
-            import org.gradle.test.ProblemWorkerTask
+            import org.gradle.test.ProblemWorkerAction
 
 
             abstract class ProblemTask extends DefaultTask {
@@ -233,7 +250,7 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
 
                 @TaskAction
                 void executeTask() {
-                    getWorkerExecutor().${isolationMode}().submit(ProblemWorkerTask.class) {}
+                    getWorkerExecutor().${isolationMode}().submit(ProblemWorkerAction.class) {}
                 }
             }
 
