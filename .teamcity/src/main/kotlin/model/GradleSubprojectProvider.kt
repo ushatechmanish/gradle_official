@@ -19,6 +19,7 @@ package model
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import com.fasterxml.jackson.core.type.TypeReference
 import java.io.File
 
 val ignoredSubprojects = listOf(
@@ -38,21 +39,11 @@ data class JsonBasedGradleSubprojectProvider(
 ) : GradleSubprojectProvider {
     private val objectMapper = ObjectMapper().registerKotlinModule()
 
-    override val subprojects = objectMapper.readValue<List<Map<String, Any>>>(jsonFile.readText()).map { toSubproject(it) }
+    override val subprojects = objectMapper.readValue(jsonFile, object : TypeReference<List<GradleSubproject>>() {})
 
     private val nameToSubproject = subprojects.map { it.name to it }.toMap()
     override fun getSubprojectsForFunctionalTest(testConfig: TestCoverage) =
         subprojects.filter { it.hasTestsOf(testConfig.testType) }
 
     override fun getSubprojectByName(name: String) = nameToSubproject[name]
-
-    private
-    fun toSubproject(subproject: Map<String, Any>): GradleSubproject {
-        val name = subproject["name"] as String
-        val path = subproject["path"] as String
-        val unitTests = !ignoredSubprojects.contains(name) && subproject["unitTests"] as Boolean
-        val functionalTests = !ignoredSubprojects.contains(name) && subproject["functionalTests"] as Boolean
-        val crossVersionTests = !ignoredSubprojects.contains(name) && subproject["crossVersionTests"] as Boolean
-        return GradleSubproject(name, path, unitTests, functionalTests, crossVersionTests)
-    }
 }

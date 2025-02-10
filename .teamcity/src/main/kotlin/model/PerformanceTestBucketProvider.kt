@@ -64,11 +64,21 @@ class StatisticsBasedPerformanceTestBucketProvider(private val model: CIBuildMod
     }
 
     private fun readPerformanceTestDurations(performanceTestDurationsJson: File): OperatingSystemToTestProjectPerformanceTestDurations {
-        val durations: List<Map<String, Any>> = objectMapper.readValue(performanceTestDurationsJson)
+        val durations: List<JsonPerformanceTestDuration> = objectMapper.readValue(performanceTestDurationsJson)
+        val ret = mutableMapOf<Os, Map<String, List<PerformanceTestDuration>>>()
+        durations.forEach { scenarioDuration ->
+            val scenario = Scenario.fromTestId(scenarioDuration.scenario)
+            scenarioDuration.durations.forEach {
+                if(it.linux!=null) {
+                    val fuck: MutableList<PerformanceTestDuration> = ret.getOrDefault(Os.LINUX, mutableMapOf())
+                       .getOrDefault<MutableList<PerformanceTestDuration>>(it.testProject, mutableListOf())
+                }
+            }
+        }
         val pairs =
             durations.flatMap { scenarioDurations ->
-                val scenario = Scenario.fromTestId(scenarioDurations["scenario"] as String)
-                (scenarioDurations["durations"] as List<Map<String, Any>>).flatMap { duration ->
+                val scenario = Scenario.fromTestId(scenarioDurations.scenario)
+                scenarioDurations.durations.forEach { duration ->
                     val testProject = duration["testProject"] as String
                     duration.entries
                         .filter { (key, _) -> key != "testProject" }

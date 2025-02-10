@@ -3,6 +3,7 @@ package model
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import com.fasterxml.jackson.core.type.TypeReference
 import common.Os
 import configurations.FunctionalTest
 import configurations.ParallelizationMethod
@@ -80,12 +81,13 @@ class StatisticBasedFunctionalTestBucketProvider(val model: CIBuildModel, testBu
     private val objectMapper = ObjectMapper().registerKotlinModule()
     private val buckets: Map<TestCoverage, List<BuildTypeBucket>> by lazy {
         val uuidToTestCoverage = model.stages.flatMap { it.functionalTests }.associateBy { it.uuid }
-        val testCoverageAndBuckets: List<Map<String, Any>> = objectMapper.readValue(testBucketsJson.readText())
+        val testCoverageAndBuckets: List<TestCoverageAndBucketSplits> = objectMapper.readValue(
+            testBucketsJson.readText(),
+            object : TypeReference<List<TestCoverageAndBucketSplits>>() {})
         testCoverageAndBuckets.associate { testCoverageAndBucket ->
-            val testCoverage: TestCoverage = uuidToTestCoverage.getValue(testCoverageAndBucket["testCoverageUuid"].toString().toInt())
-            val buckets: List<SmallSubprojectBucket> =
-                (testCoverageAndBucket["buckets"] as List<Map<String, Any>>).map {
-                    FunctionalTestBucket(it).toBuildTypeBucket(model.subprojects)
+            val testCoverage: TestCoverage = uuidToTestCoverage.getValue(testCoverageAndBucket.testCoverageUuid)
+            val buckets: List<SmallSubprojectBucket> = testCoverageAndBucket.buckets .map {
+                    it.toBuildTypeBucket(model.subprojects)
                 }
 
             // Sometimes people may add new subproject into `subprojects.json`
