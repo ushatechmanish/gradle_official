@@ -477,7 +477,7 @@ ${fooFileLocation}:9: warning: [cast] redundant cast to $expectedType
     def "invalid flags should be reported as problems"() {
         given:
         writeJavaCausingTwoCompilationWarnings("Foo")
-        buildFile << "tasks.compileJava.options.compilerArgs += ['-invalid-flag']"
+        buildFile << "tasks.compileJava.options.compilerArgs.addAll(['-invalid-flag']")
 
         when:
         fails("compileJava")
