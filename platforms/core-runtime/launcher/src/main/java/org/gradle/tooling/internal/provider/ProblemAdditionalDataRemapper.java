@@ -111,7 +111,7 @@ public class ProblemAdditionalDataRemapper implements BuildEventConsumer {
         VisitableURLClassLoader visitableURLClassLoader = new VisitableURLClassLoader("name", getClass().getClassLoader(), classPath);
         Object o = ClassLoaderUtils.executeInClassloader(visitableURLClassLoader, () -> {
             Isolatable<?> deserialize = isolatableSerializerRegistry.deserialize(isolatableBytes);
-            return deserialize.coerce(type);
+            return deserialize.isolate();
         });
 //        Isolatable<?> deserialize = isolatableSerializerRegistry.deserialize(isolatableBytes);
 //        deserialize.coerce(type);

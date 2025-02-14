@@ -227,8 +227,6 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
     }
 
     interface SomeDataView {
-        void setName(String name);
-
         String getName();
     }
 
