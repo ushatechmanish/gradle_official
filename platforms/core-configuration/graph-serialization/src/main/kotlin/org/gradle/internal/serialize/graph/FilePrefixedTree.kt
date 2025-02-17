@@ -24,13 +24,9 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * A prefixed tree implementation optimized for storage space-wise.
- *
- * Can be implemented for any [T] of the hierarchical nature that can be represented as a list of string segments
- * and be build back from such a list. Common examples of such data are {@link File} and {@link Path}.
- *
+ * An implementation of space-optimized prefix tree for files.
  * Because of the space optimization focus, the effective lookup is possible only after building indexes table.
- *
+ * <p>
  * The tree can be compressed. The compressing factor is totally depends on the structure of the tree.
  */
 @ServiceScope(BuildTree::class)
@@ -40,8 +36,13 @@ class FilePrefixedTree {
 
     val root = Node(null, "")
 
+
     /**
-     * Splitting [item] to segments by using [splitToSegments] method, and hierarchically inserts resulting nodes to the tree.
+     * Inserts a file path into the tree, creating necessary nodes if they do not exist.
+     * Insertion is thread-safe.
+     *
+     * @return the index of the final node representing the file.
+     * If the path already exists, returns the existing index.
      * */
     fun insert(file: File): Int {
         val segments = FilePathUtil.getPathSegments(file.path)
@@ -64,9 +65,11 @@ class FilePrefixedTree {
     }
 
     /**
-     * The only way to do effective lookup in the tree.
-     * Indexes are being built by doing a DFS through entire tree to build a mapping between an index and an item.
-     * */
+     * The only efficient way to perform a lookup in the tree.
+     * <p>
+     * Indexes are built by performing a depth-first search (DFS) through the entire tree,
+     * creating a mapping between each index and its corresponding item.
+     */
     fun buildIndexes(root: Node): Map<Int, File> {
         val indexes = mutableMapOf<Int, File>()
         buildIndexFor(root, mutableListOf(), indexes)
@@ -74,44 +77,10 @@ class FilePrefixedTree {
     }
 
     /**
-     * Compresses intermediate and, in some cases, final nodes that have only one child.
-     *
-     * Some examples, final node are capitalized:
-     *
-     *                      -> (D)
-     * 1. (a) -> (b) -> (c)
-     *                      -> (F)
-     *
-     * will be compressed to
-     *
-     *             -> (D)
-     * (a / b / c)
-     *             -> (F)
-     *
-     * 2. (a) -> (b) -> (c) -> (D)
-     *
-     * will be compressed to
-     *
-     * (a / b / c / D)
-     *
-     *                      -> (d) -> (E)
-     * 3. (a) -> (b) -> (c)
-     *                      -> (f) -> (G)
-     *
-     * will be compressed to
-     *
-     *             -> (d/E)
-     * (a / b / c)
-     *             -> (f/G)
-     *
-     * 4. (a) -> (b) -> (C) -> (D)
-     *
-     * will be compressed to
-     *
-     * (a / b) -> (C) -> (D)
-     *
-     * Tree should be compressed after the point when all the insertion are completed.
-     * */
+     * Compresses the current tree following the <a href="http://en.wikipedia.org/wiki/Radix_tree">Radix tree</a> idea.
+     * <p>
+     * Tree should be compressed only after all insertions are completed.
+     */
     fun compress(): Node = compressFrom(root)
 
     private fun compressFrom(node: Node): Node {

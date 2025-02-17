@@ -25,6 +25,7 @@ import org.gradle.internal.serialize.graph.FileSystemTreeDecoder
 import org.gradle.internal.serialize.graph.FileSystemTreeEncoder
 import org.gradle.internal.serialize.graph.ReadContext
 import org.gradle.internal.serialize.graph.WriteContext
+import org.gradle.internal.serialize.graph.withDebugFrame
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
@@ -38,7 +39,9 @@ class DefaultFileSystemTreeEncoder(
     }
 
     override suspend fun writeTree() {
-        globalContext.writePrefixedTreeNode(prefixedTree.compress())
+        globalContext.withDebugFrame({ "File Tree" }) {
+            writePrefixedTreeNode(prefixedTree.compress())
+        }
     }
 
     override fun close() {
