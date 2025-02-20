@@ -27,6 +27,7 @@ import com.nhaarman.mockito_kotlin.same
 import com.nhaarman.mockito_kotlin.verify
 
 import org.gradle.api.Action
+import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -41,6 +42,7 @@ import org.gradle.kotlin.dsl.fixtures.FoldersDslExpression
 import org.gradle.kotlin.dsl.fixtures.assertFailsWith
 import org.gradle.kotlin.dsl.fixtures.assertInstanceOf
 import org.gradle.kotlin.dsl.fixtures.assertStandardOutputOf
+import org.gradle.kotlin.dsl.fixtures.clickableUrlFor
 import org.gradle.kotlin.dsl.fixtures.withFolders
 
 import org.gradle.kotlin.dsl.precompile.v1.PrecompiledInitScript
@@ -481,15 +483,31 @@ class PrecompiledScriptPluginTemplatesTest : AbstractPrecompiledScriptPluginTest
             """
         )
 
+        executer.expectDeprecationWarning(
+            "e: ${clickableUrlFromKotlinCompilerFor(file("src/main/kotlin/my-project-plugin.gradle.kts"))}:3:17 " +
+                "'fun Project.plugins(block: PluginDependenciesSpec.() -> Unit): Nothing' is deprecated. " +
+                "The plugins {} block must not be used here. " +
+                "If you need to apply a plugin imperatively, please use apply<PluginType>() or apply(plugin = \"id\") instead."
+        )
+
         buildAndFail("classes").run {
             assertHasDescription(
                 "Execution failed for task ':compileKotlin'."
             )
             assertHasErrorOutput(
-                """my-project-plugin.gradle.kts:3:17 Using 'plugins(PluginDependenciesSpec.() -> Unit): Nothing' is an error. The plugins {} block must not be used here. If you need to apply a plugin imperatively, please use apply<PluginType>() or apply(plugin = "id") instead."""
+                """my-project-plugin.gradle.kts:3:17 'fun Project.plugins(block: PluginDependenciesSpec.() -> Unit): Nothing' is deprecated. The plugins {} block must not be used here. If you need to apply a plugin imperatively, please use apply<PluginType>() or apply(plugin = "id") instead."""
             )
         }
     }
+
+    private fun clickableUrlFromKotlinCompilerFor(file: File): String =
+        clickableUrlFor(file).let { url ->
+            if (JavaVersion.current() < JavaVersion.VERSION_20) {
+                url.replace("%C5%9D", "s%CC%82")
+            } else {
+                url
+            }
+        }
 
     @Test
     fun `can apply plugin using ObjectConfigurationAction syntax`() {
