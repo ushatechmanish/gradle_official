@@ -56,12 +56,8 @@ class GradleKotlinDslRegressionsTest : AbstractKotlinIntegrationTest() {
         build("help")
     }
 
-    /**
-     * When this issue gets fixed in a future Kotlin version, remove -XXLanguage:+DisableCompatibilityModeForNewInference from Kotlin DSL compiler arguments.
-     */
     @Test
     @Issue("https://youtrack.jetbrains.com/issue/KT-44303")
-    @ToBeImplemented
     fun `kotlin resolution and inference issue KT-44303`() {
         withBuildScript("""
             import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -89,12 +85,7 @@ class GradleKotlinDslRegressionsTest : AbstractKotlinIntegrationTest() {
             }
         """)
 
-        val result = buildAndFail("classes")
-
-        result.assertHasFailure("Execution failed for task ':compileKotlin'.") {
-            it.assertHasCause("Compilation error. See log for more details")
-        }
-        result.assertHasErrorOutput("src/main/kotlin/code.kt:7:25 Unresolved reference 'set'.")
+        build("classes")
     }
 
     @Test

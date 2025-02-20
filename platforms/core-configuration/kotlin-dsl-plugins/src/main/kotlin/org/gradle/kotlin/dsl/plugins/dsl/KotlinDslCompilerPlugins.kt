@@ -65,19 +65,10 @@ abstract class KotlinDslCompilerPlugins : Plugin<Project> {
                     languageVersion.set(KotlinVersion.KOTLIN_2_1)
                     freeCompilerArgs.addAll(KotlinDslPluginSupport.kotlinCompilerArgs)
                 }
-                kotlinCompile.setWarningRewriter(ExperimentalCompilerWarningSilencer(listOf(
-                    "-XXLanguage:+DisableCompatibilityModeForNewInference",
-                    "-XXLanguage:-TypeEnhancementImprovementsInStrictMode",
-                )))
                 // Set this back to a warning for now, as this plugin is frequently used without toolchains specifying a JVM target, and it causes errors when using newer JDKs.
                 // This can be removed when https://youtrack.jetbrains.com/issue/KT-66919 is fixed.
                 kotlinCompile.jvmTargetValidationMode.set(JvmTargetValidationMode.WARNING)
             }
         }
-    }
-
-    private
-    fun KotlinCompile.setWarningRewriter(rewriter: ContextAwareTaskLogger.MessageRewriter) {
-        (logger as ContextAwareTaskLogger).setMessageRewriter(rewriter)
     }
 }
