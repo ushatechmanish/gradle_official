@@ -43,7 +43,7 @@ abstract class AbstractJavaCompilerIntegrationSpec extends AbstractIntegrationSp
                 id("java-library")
             }
             tasks.withType(JavaCompile) {
-                options.compilerArgs << '-Xlint:all,-options' << '-Werror'
+                options.compilerArgs.addAll(['-Xlint:all,-options', '-Werror'])
             }
         """
         buildFile << compilerConfiguration()
@@ -801,9 +801,9 @@ abstract class AbstractJavaCompilerIntegrationSpec extends AbstractIntegrationSp
         } else {
             def javaHome = TextUtil.escapeString(jvm.javaHome.absolutePath)
             return """
-                options.compilerArgs += [
+                options.compilerArgs.addAll([
                     '--system', '${javaHome}'
-                ]
+                ])
             """
         }
     }

@@ -92,7 +92,7 @@ class CompileOptionsTest extends Specification {
 
     def "converts GStrings to Strings when getting all compiler arguments"() {
         given:
-        compileOptions.compilerArgs << "Foo${23}"
+        compileOptions.compilerArgs.add("Foo${23}")
 
         expect:
         compileOptions.allCompilerArgs.get().contains('Foo23')
