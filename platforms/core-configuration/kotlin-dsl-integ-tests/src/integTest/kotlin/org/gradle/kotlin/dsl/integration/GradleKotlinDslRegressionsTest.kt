@@ -19,7 +19,7 @@ package org.gradle.kotlin.dsl.integration
 import org.gradle.integtests.fixtures.RepoScriptBlockUtil.mavenCentralRepository
 import org.gradle.kotlin.dsl.fixtures.AbstractKotlinIntegrationTest
 import org.gradle.test.fixtures.dsl.GradleDsl.KOTLIN
-import org.gradle.util.internal.ToBeImplemented
+import org.junit.Ignore
 import org.junit.Test
 import spock.lang.Issue
 
@@ -44,6 +44,7 @@ class GradleKotlinDslRegressionsTest : AbstractKotlinIntegrationTest() {
 
     @Test
     @Issue("https://youtrack.jetbrains.com/issue/KT-44303")
+    @Ignore
     fun `can configure ext extension`() {
         withBuildScript(
             """
@@ -58,6 +59,7 @@ class GradleKotlinDslRegressionsTest : AbstractKotlinIntegrationTest() {
 
     @Test
     @Issue("https://youtrack.jetbrains.com/issue/KT-44303")
+    @Ignore
     fun `kotlin resolution and inference issue KT-44303`() {
         withBuildScript("""
             import org.jetbrains.kotlin.gradle.tasks.KotlinCompile

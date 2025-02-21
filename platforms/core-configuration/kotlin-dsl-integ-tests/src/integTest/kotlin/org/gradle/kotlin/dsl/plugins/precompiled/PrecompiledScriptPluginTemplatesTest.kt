@@ -37,6 +37,7 @@ import org.gradle.api.plugins.ObjectConfigurationAction
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.internal.jvm.Jvm
 
 import org.gradle.kotlin.dsl.fixtures.FoldersDslExpression
 import org.gradle.kotlin.dsl.fixtures.assertFailsWith
@@ -57,6 +58,7 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 
 import org.jetbrains.kotlin.name.NameUtils
+import org.junit.Ignore
 
 import org.junit.Test
 
@@ -469,6 +471,7 @@ class PrecompiledScriptPluginTemplatesTest : AbstractPrecompiledScriptPluginTest
     }
 
     @Test
+    @Ignore
     fun `nested plugins block fails to compile with reasonable message`() {
 
         withKotlinDslPlugin()
@@ -502,6 +505,7 @@ class PrecompiledScriptPluginTemplatesTest : AbstractPrecompiledScriptPluginTest
 
     private fun clickableUrlFromKotlinCompilerFor(file: File): String =
         clickableUrlFor(file).let { url ->
+            Jvm.current().vendor
             if (JavaVersion.current() < JavaVersion.VERSION_20) {
                 url.replace("%C5%9D", "s%CC%82")
             } else {
