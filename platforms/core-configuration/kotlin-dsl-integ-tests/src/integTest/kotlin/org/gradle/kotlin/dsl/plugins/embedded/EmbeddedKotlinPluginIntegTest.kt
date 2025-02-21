@@ -138,7 +138,7 @@ class EmbeddedKotlinPluginIntegTest : AbstractKotlinIntegrationTest() {
                 println(it)
             }
 
-            val components =
+            val componentIdentifiers =
                 configurations
                     .compileClasspath.get()
                     .incoming
@@ -149,7 +149,7 @@ class EmbeddedKotlinPluginIntegTest : AbstractKotlinIntegrationTest() {
             val resolvedComponents =
                 dependencies
                     .createArtifactResolutionQuery()
-                    .forComponents(*components.toTypedArray())
+                    .forComponents(*componentIdentifiers.toTypedArray())
                     .withArtifacts(
                         JvmLibrary::class.java,
                         SourcesArtifact::class.java,

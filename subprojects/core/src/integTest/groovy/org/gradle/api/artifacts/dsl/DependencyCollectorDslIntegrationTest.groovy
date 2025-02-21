@@ -123,7 +123,7 @@ abstract class DependencyCollectorDslIntegrationTest extends AbstractIntegration
         file(dsl.fileNameFor("build")).text = """
         ${setupDependencies()}
 
-        dependencies {
+        myDependencies {
             testingCollector(${expression})
         }
 
@@ -161,7 +161,7 @@ abstract class DependencyCollectorDslIntegrationTest extends AbstractIntegration
         file(dsl.fileNameFor("build")).text = """
         ${setupDependencies()}
 
-        dependencies {
+        myDependencies {
             // This test can be removed if we stop having two different types for Version Catalog accessors
             assert(${versionCatalog(PVC_GROUP, PVC_NAME)} ${instanceOf(dsl)} ProviderConvertible${dsl == GradleDsl.GROOVY ? "" : "<*>"})
             testingCollector(${expression})
@@ -195,7 +195,7 @@ abstract class DependencyCollectorDslIntegrationTest extends AbstractIntegration
         file(dsl.fileNameFor("build")).text = """
         ${setupDependencies()}
 
-        dependencies {
+        myDependencies {
             testingCollector(${expression})
         }
 
@@ -217,7 +217,7 @@ abstract class DependencyCollectorDslIntegrationTest extends AbstractIntegration
         file(dsl.fileNameFor("build")).text = """
         ${setupDependencies()}
 
-        dependencies {
+        myDependencies {
             testingCollector($expression)
         }
 
@@ -242,7 +242,7 @@ abstract class DependencyCollectorDslIntegrationTest extends AbstractIntegration
         file(dsl.fileNameFor("build")).text = """
         ${setupDependencies()}
 
-        dependencies {
+        myDependencies {
             testingCollector(${expression})
         }
 
@@ -266,7 +266,7 @@ abstract class DependencyCollectorDslIntegrationTest extends AbstractIntegration
         file(dsl.fileNameFor("build")).text = """
         ${setupDependencies()}
 
-        dependencies {
+        myDependencies {
             testingCollector.bundle(${versionCatalogBundle(MYDEPS_BUNDLE)})
         }
 
@@ -288,7 +288,7 @@ abstract class DependencyCollectorDslIntegrationTest extends AbstractIntegration
         file(dsl.fileNameFor("build")).text = """
         ${setupDependencies()}
 
-        dependencies {
+        myDependencies {
             testingCollector(${expression}) {
                 because("the action must be tested")
                 ${testExcludes ? "exclude(${makeNamedArgs([group: renderString(BAZ_GROUP), module: renderString(BAZ_NAME)], dsl)})" : ""}
@@ -335,7 +335,7 @@ abstract class DependencyCollectorDslIntegrationTest extends AbstractIntegration
         file(dsl.fileNameFor("build")).text = """
         ${setupDependencies()}
 
-        dependencies {
+        myDependencies {
             testingCollector.bundle(${versionCatalogBundle(MYDEPS_BUNDLE)}) {
                 because("the action must be tested")
                 exclude(${makeNamedArgs([group: renderString(BAZ_GROUP), module: renderString(BAZ_NAME)], dsl)})
@@ -366,7 +366,7 @@ ${BAZ_GROUP}:${BAZ_NAME}
         file(dsl.fileNameFor("build")).text = """
         ${setupDependencies()}
 
-        dependencies {
+        myDependencies {
             testingCollector(constraint(${expression}))
         }
 
@@ -410,10 +410,10 @@ class DependencyCollectorGroovyDslIntegrationTest extends DependencyCollectorDsl
                 }
             }
 
-            def dependencies = objects.newInstance(MyDependencies)
+            def myDependencies = objects.newInstance(MyDependencies)
 
             def testingCollectorConf = configurations.dependencyScope("testingCollector").get()
-            testingCollectorConf.fromDependencyCollector(dependencies.testingCollector)
+            testingCollectorConf.fromDependencyCollector(myDependencies.testingCollector)
         """
     }
 
@@ -424,7 +424,7 @@ class DependencyCollectorGroovyDslIntegrationTest extends DependencyCollectorDsl
         file(dsl.fileNameFor("build")).text = """
         ${setupDependencies()}
 
-        dependencies {
+        myDependencies {
             testingCollector(${providerOf(singleString(FOO_GROUP, FOO_NAME, FOO_VERSION))})
         }
         """
@@ -453,10 +453,10 @@ class DependencyCollectorKotlinDslIntegrationTest extends DependencyCollectorDsl
                 }
             }
 
-            val dependencies = objects.newInstance(MyDependencies::class.java)
+            val myDependencies = objects.newInstance(MyDependencies::class.java)
 
             val testingCollectorConf = configurations.dependencyScope("testingCollector").get()
-            testingCollectorConf.fromDependencyCollector(dependencies.testingCollector)
+            testingCollectorConf.fromDependencyCollector(myDependencies.testingCollector)
         """
     }
 
@@ -465,7 +465,7 @@ class DependencyCollectorKotlinDslIntegrationTest extends DependencyCollectorDsl
         file(dsl.fileNameFor("build")).text = """
         ${setupDependencies()}
 
-        dependencies {
+        myDependencies {
             testingCollector(${providerOf(singleString(FOO_GROUP, FOO_NAME, FOO_VERSION))})
         }
         """
