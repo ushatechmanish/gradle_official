@@ -19,6 +19,7 @@ package org.gradle.api.problems.internal
 import org.gradle.api.problems.AdditionalData
 import org.gradle.api.problems.ProblemGroup
 import org.gradle.api.problems.ProblemId
+import org.gradle.internal.isolation.IsolatableFactory
 import org.gradle.internal.problems.NoOpProblemDiagnosticsFactory
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.tooling.internal.provider.serialization.PayloadSerializer
@@ -48,7 +49,7 @@ class DefaultProblemBuilderTest extends Specification {
     }
 
     DefaultProblemBuilder createProblemBuilder() {
-        new DefaultProblemBuilder(EMPTY_STREAM, new AdditionalDataBuilderFactory(), Mock(Instantiator.class), Mock(PayloadSerializer.class), isolatableFactory)
+        new DefaultProblemBuilder(EMPTY_STREAM, new AdditionalDataBuilderFactory(), Mock(Instantiator.class), Mock(PayloadSerializer.class), Mock(IsolatableFactory), Mock(IsolatableToBytesSerializer))
     }
 
     def 'additionalData accepts DeprecationDataInternalSpec'() {

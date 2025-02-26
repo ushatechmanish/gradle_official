@@ -58,7 +58,7 @@ class PayloadSerializerObjectOutputStream extends ExceptionReplacingObjectOutput
 
     private void writeClassLoader(Class<?> targetClass) throws IOException {
         Package aPackage = targetClass.getPackage();
-        if (TopLevelExceptionPlaceholder.class.getPackage().equals(aPackage) || aPackage.getName().equals("org.gradle.api.provider")) {
+        if (TopLevelExceptionPlaceholder.class.getPackage().equals(aPackage)) {
             writeShort(SAME_CLASSLOADER_TOKEN);
         } else {
             writeShort(map.visitClass(targetClass));
