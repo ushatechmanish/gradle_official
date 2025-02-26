@@ -19,6 +19,8 @@ package org.gradle.workers.internal;
 import org.gradle.internal.Cast;
 import org.gradle.internal.classloader.ClassLoaderUtils;
 import org.gradle.internal.isolation.IsolatableFactory;
+import org.gradle.process.internal.worker.request.IsolatableSerializerRegistry;
+import org.gradle.process.internal.worker.request.WorkSerializationException;
 import org.gradle.workers.WorkAction;
 import org.gradle.workers.WorkParameters;
 

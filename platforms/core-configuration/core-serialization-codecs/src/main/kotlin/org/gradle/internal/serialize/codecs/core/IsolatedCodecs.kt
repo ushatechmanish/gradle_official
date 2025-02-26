@@ -18,22 +18,22 @@ package org.gradle.internal.serialize.codecs.core
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableSet
+import org.gradle.internal.hash.HashCode
+import org.gradle.internal.isolation.Isolatable
 import org.gradle.internal.serialize.graph.Codec
 import org.gradle.internal.serialize.graph.ReadContext
 import org.gradle.internal.serialize.graph.WriteContext
 import org.gradle.internal.serialize.graph.readNonNull
-import org.gradle.internal.hash.HashCode
-import org.gradle.internal.isolation.Isolatable
 import org.gradle.internal.snapshot.impl.BooleanValueSnapshot
 import org.gradle.internal.snapshot.impl.FileValueSnapshot
 import org.gradle.internal.snapshot.impl.IntegerValueSnapshot
 import org.gradle.internal.snapshot.impl.IsolatedArray
 import org.gradle.internal.snapshot.impl.IsolatedEnumValueSnapshot
 import org.gradle.internal.snapshot.impl.IsolatedImmutableManagedValue
+import org.gradle.internal.snapshot.impl.IsolatedJavaSerializedValueSnapshot
 import org.gradle.internal.snapshot.impl.IsolatedList
 import org.gradle.internal.snapshot.impl.IsolatedManagedValue
 import org.gradle.internal.snapshot.impl.IsolatedMap
-import org.gradle.internal.snapshot.impl.IsolatedJavaSerializedValueSnapshot
 import org.gradle.internal.snapshot.impl.IsolatedSet
 import org.gradle.internal.snapshot.impl.MapEntrySnapshot
 import org.gradle.internal.snapshot.impl.NullValueSnapshot
@@ -69,7 +69,7 @@ object IsolatedSetCodec : Codec<IsolatedSet> {
     }
 
     override suspend fun ReadContext.decode(): IsolatedSet {
-        val elements = readNonNull<ImmutableSet<Isolatable<*>>>()
+        val elements = readNonNull<ImmutableSet<org.gradle.internal.isolation.Isolatable<*>>>()
         return IsolatedSet(elements)
     }
 }
@@ -81,7 +81,7 @@ object IsolatedListCodec : Codec<IsolatedList> {
     }
 
     override suspend fun ReadContext.decode(): IsolatedList {
-        val elements = readNonNull<ImmutableList<Isolatable<*>>>()
+        val elements = readNonNull<ImmutableList<org.gradle.internal.isolation.Isolatable<*>>>()
         return IsolatedList(elements)
     }
 }
@@ -93,7 +93,7 @@ object IsolatedMapCodec : Codec<IsolatedMap> {
     }
 
     override suspend fun ReadContext.decode(): IsolatedMap {
-        val elements = readNonNull<ImmutableList<MapEntrySnapshot<Isolatable<*>>>>()
+        val elements = readNonNull<ImmutableList<MapEntrySnapshot<org.gradle.internal.isolation.Isolatable<*>>>>()
         return IsolatedMap(elements)
     }
 }
@@ -121,7 +121,7 @@ object IsolatedArrayCodec : Codec<IsolatedArray> {
 
     override suspend fun ReadContext.decode(): IsolatedArray {
         val arrayType = readClass()
-        val elements = readNonNull<ImmutableList<Isolatable<*>>>()
+        val elements = readNonNull<ImmutableList<org.gradle.internal.isolation.Isolatable<*>>>()
         return IsolatedArray(elements, arrayType)
     }
 }
@@ -185,7 +185,7 @@ class IsolatedManagedValueCodec(private val managedFactory: ManagedFactoryRegist
     override suspend fun ReadContext.decode(): IsolatedManagedValue {
         val targetType = readClass()
         val factoryId = readSmallInt()
-        val state = readNonNull<Isolatable<Any>>()
+        val state = readNonNull<org.gradle.internal.isolation.Isolatable<Any>>()
         return IsolatedManagedValue(targetType, managedFactory.lookup(factoryId), state)
     }
 }

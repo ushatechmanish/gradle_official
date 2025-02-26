@@ -13,17 +13,23 @@ dependencies {
     api(projects.baseServices)
     api(projects.buildOperations)
     api(projects.concurrent)
+    api(projects.coreApi)
+    api(projects.files)
     api(projects.messaging)
     api(projects.serialization)
     api(projects.workerMain)
 
+    implementation(projects.buildProcessServices)
     implementation(projects.classloaders)
+    implementation(projects.fileCollections)
+    implementation(projects.fileOperations)
     implementation(projects.persistentCache)
     implementation(projects.problemsApi)
     implementation(projects.serviceLookup)
     implementation(projects.serviceProvider)
     implementation(projects.serviceRegistryBuilder)
     implementation(projects.stdlibJavaExtensions)
+    implementation(projects.snapshotsWorker)
 
     // TODO: Ideally, we would not depend on model-core in a worker.
     // All we really want is the instantiation infrastructure, but this

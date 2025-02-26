@@ -16,6 +16,7 @@
 
 package org.gradle.integtests.fixtures.problems
 
+
 import groovy.transform.CompileStatic
 import org.gradle.api.problems.AdditionalData
 import org.gradle.api.problems.FileLocation

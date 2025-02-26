@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.gradle.workers.internal;
+package org.gradle.process.internal.worker.request;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;

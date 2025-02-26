@@ -9,6 +9,7 @@ description = """Persistent caches on disk and cross process locking.
 """.trimMargin()
 
 dependencies {
+    api(projects.buildProcessServices)
     api(projects.buildOperations)
     api(projects.concurrent)
     api(projects.files)

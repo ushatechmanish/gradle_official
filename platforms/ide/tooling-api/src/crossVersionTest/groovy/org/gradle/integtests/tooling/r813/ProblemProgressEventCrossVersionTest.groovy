@@ -16,7 +16,6 @@
 
 package org.gradle.integtests.tooling.r813
 
-
 import org.gradle.integtests.fixtures.GroovyBuildScriptLanguage
 import org.gradle.integtests.tooling.fixture.ProblemsApiGroovyScriptUtils
 import org.gradle.integtests.tooling.fixture.TargetGradleVersion
@@ -159,25 +158,45 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
 
             public interface ProblemsWorkerTaskParameter extends WorkParameters { }
         """
+        file('buildSrc/src/main/java/org/gradle/test/SomeOtherData.java') << """
+            package org.gradle.test;
+
+            import org.gradle.api.provider.Property;
+
+// composition, collections
+
+            public interface SomeOtherData{
+                String getOtherName();
+                void setOtherName(String name);
+            }
+
+        """
         file('buildSrc/src/main/java/org/gradle/test/SomeData.java') << """
             package org.gradle.test;
 
             import org.gradle.api.problems.AdditionalData;
             import org.gradle.api.provider.Property;
 
-            public interface SomeData extends AdditionalData {
-//                String getName();
-//                void setName(String name);
-                  Property<String> getName();
-//                void setValues(List<String> values);
-//                List<String> getValues();
-            }
+            import java.util.List;
 
+// composition, collections
+            public interface SomeData extends AdditionalData {
+//                  Property<String> getName();
+                  String getName();
+                  void setName(String name);
+
+                  List<String> getNames();
+                  void setNames(List<String> names);
+
+                  SomeOtherData getOtherData();
+                  void setOtherData(SomeOtherData otherData);
+            }
         """
         file('buildSrc/src/main/java/org/gradle/test/ProblemWorkerAction.java') << """
             package org.gradle.test;
 
             import java.io.File;
+            import java.util.Collections;
             import java.io.FileWriter;
             import org.gradle.api.problems.Problems;
             import org.gradle.api.problems.internal.InternalProblems;
@@ -203,20 +222,29 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
                     try {
                         ObjectFactory of = getObjectFactory();
                         SomeData sd = of.newInstance(SomeData.class);
-                        sd.getName().set("someData");
-                        System.out.println("someData: " + sd.getName().get());
+//                        sd.getName().set("someData");
+                        sd.setName("someData");
+//                        System.out.println("someData: " + sd.getName().get());
+                        System.out.println("someData: " + sd.getName());
 
                         sd = getProblems().getInstantiator().newInstance(SomeData.class);
-                        sd.getName().set("someData");
-                        System.out.println("someData: " + sd.getName().get());
+//                        sd.getName().set("someData");
+                        sd.setName("someData");
+                        System.out.println("someData: " + sd.getName());
+//                        System.out.println("someData: " + sd.getName().get());
                         Exception wrappedException = new Exception("Wrapped cause");
                         // Create and report a problem
                         // This needs to be Java 6 compatible, as we are in a worker
                         ProblemId problemId = ProblemId.create("type", "label", ProblemGroup.create("generic", "Generic"));
                         getProblems().getReporter().report(problemId, problem -> problem
-//                                .stackLocation()
-                                .additionalData(SomeData.class, d -> d.getName().set("someData"))
-//                                .withException(new RuntimeException("Exception message", wrappedException))
+                                .additionalData(SomeData.class, d -> {
+                                    d.setName("someData");
+                                    d.setNames(Collections.singletonList("someMoreData"));
+                                    SomeOtherData sod = of.newInstance(SomeOtherData.class);
+                                    sod.setOtherName("otherName");
+                                    d.setOtherData(sod);
+                                }
+                                )
                         );
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -226,8 +254,16 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
         """
     }
 
+    interface SomeOtherDataView {
+        String getOtherName();
+    }
+
     interface SomeDataView {
         String getName();
+
+        List<String> getNames();
+
+        SomeOtherDataView getOtherData();
     }
 
     @IgnoreRest
@@ -269,7 +305,11 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
 
         then:
         listener.problems.size() == 1
-        listener.problems[0].additionalData.get(SomeDataView).name == "someData"
+
+        def someDataView = listener.problems[0].additionalData.get(SomeDataView)
+        someDataView.name == "someData"
+        someDataView.names == ["someMoreData"]
+        someDataView.otherData.otherName == "otherName"
 
         where:
 //        isolationMode << WorkerExecutorFixture.ISOLATION_MODES

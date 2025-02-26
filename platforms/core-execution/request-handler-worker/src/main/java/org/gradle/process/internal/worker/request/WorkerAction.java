@@ -17,10 +17,6 @@
 package org.gradle.process.internal.worker.request;
 
 import org.gradle.api.Action;
-import org.gradle.api.internal.CollectionCallbackActionDecorator;
-import org.gradle.api.internal.MutationGuards;
-import org.gradle.api.internal.collections.DefaultDomainObjectCollectionFactory;
-import org.gradle.api.internal.collections.DomainObjectCollectionFactory;
 import org.gradle.api.internal.file.DefaultFileCollectionFactory;
 import org.gradle.api.internal.file.DefaultFileLookup;
 import org.gradle.api.internal.file.DefaultFilePropertyFactory;
@@ -32,17 +28,13 @@ import org.gradle.api.internal.file.FileResolver;
 import org.gradle.api.internal.file.collections.DefaultDirectoryFileTreeFactory;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
 import org.gradle.api.internal.file.collections.ManagedFactories;
-import org.gradle.api.internal.model.DefaultObjectFactory;
 import org.gradle.api.internal.initialization.loadercache.ModelClassLoaderFactory;
-import org.gradle.api.internal.provider.PropertyInternal;
 import org.gradle.api.internal.model.NamedObjectInstantiator;
 import org.gradle.api.internal.provider.DefaultPropertyFactory;
 import org.gradle.api.internal.provider.PropertyFactory;
 import org.gradle.api.internal.provider.PropertyHost;
+import org.gradle.api.internal.provider.PropertyInternal;
 import org.gradle.api.internal.tasks.DefaultTaskDependencyFactory;
-import org.gradle.api.internal.tasks.TaskDependencyFactory;
-import org.gradle.api.internal.tasks.properties.annotations.OutputPropertyRoleAnnotationHandler;
-import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.problems.internal.DefaultProblems;
 import org.gradle.api.problems.internal.ExceptionProblemRegistry;
 import org.gradle.api.problems.internal.InternalProblems;
@@ -51,16 +43,15 @@ import org.gradle.api.tasks.util.internal.PatternSets;
 import org.gradle.api.tasks.util.internal.PatternSpecFactory;
 import org.gradle.cache.Cache;
 import org.gradle.cache.internal.ClassCacheFactory;
-import org.gradle.cache.internal.MapBackedCache;
 import org.gradle.cache.internal.CrossBuildInMemoryCacheFactory;
 import org.gradle.cache.internal.DefaultCrossBuildInMemoryCacheFactory;
+import org.gradle.cache.internal.MapBackedCache;
 import org.gradle.internal.Cast;
 import org.gradle.internal.Factory;
 import org.gradle.internal.UncheckedException;
 import org.gradle.internal.classloader.FilteringClassLoader;
 import org.gradle.internal.concurrent.Stoppable;
 import org.gradle.internal.dispatch.StreamCompletion;
-import org.gradle.internal.event.DefaultListenerManager;
 import org.gradle.internal.event.ListenerManager;
 import org.gradle.internal.file.PathToFileResolver;
 import org.gradle.internal.hash.ClassLoaderHierarchyHasher;
@@ -77,11 +68,10 @@ import org.gradle.internal.service.ServiceRegistration;
 import org.gradle.internal.service.ServiceRegistrationProvider;
 import org.gradle.internal.service.ServiceRegistry;
 import org.gradle.internal.service.ServiceRegistryBuilder;
-import org.gradle.internal.state.ModelObject;
-import org.gradle.internal.service.scopes.Scope.Global;
 import org.gradle.internal.snapshot.impl.DefaultIsolatableFactory;
 import org.gradle.internal.state.DefaultManagedFactoryRegistry;
 import org.gradle.internal.state.ManagedFactoryRegistry;
+import org.gradle.internal.state.ModelObject;
 import org.gradle.process.internal.worker.RequestHandler;
 import org.gradle.process.internal.worker.WorkerProcessContext;
 import org.gradle.process.internal.worker.child.WorkerLogEventListener;
@@ -91,15 +81,13 @@ import org.gradle.tooling.internal.provider.serialization.DefaultPayloadClassLoa
 import org.gradle.tooling.internal.provider.serialization.PayloadSerializer;
 import org.gradle.tooling.internal.provider.serialization.WellKnownClassLoaderRegistry;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
-
-import static java.util.Collections.emptyList;
 
 /**
  * Worker-side implementation of {@link RequestProtocol} executing actions.
@@ -112,6 +100,7 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
     private transient WorkerLogEventListener workerLogEventListener;
     private transient RequestHandler<Object, Object> implementation;
     private transient Exception failure;
+    private InstantiatorFactory instantiatorFactory;
 
     public WorkerAction(Class<?> workerImplementation) {
         this.workerImplementationName = workerImplementation.getName();
@@ -119,12 +108,12 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
 
     public static class ProblemsServiceProvider implements ServiceRegistrationProvider {
 
-        //        private final InstantiatorFactory instantiatorFactory;
+        private final InstantiatorFactory instantiatorFactory;
         private final ResponseProtocol responder;
 
         public ProblemsServiceProvider(ResponseProtocol responder, InstantiatorFactory instantiatorFactory) {
             this.responder = responder;
-//            this.instantiatorFactory = instantiatorFactory;
+            this.instantiatorFactory = instantiatorFactory;
         }
 
         void configure(ServiceRegistration serviceRegistration) {
@@ -132,38 +121,38 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
             serviceRegistration.add(FilePropertyFactory.class, FileFactory.class, DefaultFilePropertyFactory.class);
         }
 
-        @Provides
-        InstantiatorFactory createInstantiatorFactory() {
-            return new DefaultInstantiatorFactory(
-                new DefaultCrossBuildInMemoryCacheFactory(
-                    new DefaultListenerManager(Global.class)), emptyList(),
-                new OutputPropertyRoleAnnotationHandler(emptyList()));
-        }
-
-        @Provides
-        ObjectFactory createObjectFactory(
-            InstantiatorFactory instantiatorFactory,
-            ServiceRegistry services,
-            Factory<PatternSet> patternSetFactory,
-            DirectoryFileTreeFactory directoryFileTreeFactory,
-            PropertyFactory propertyFactory,
-            FilePropertyFactory filePropertyFactory,
-            TaskDependencyFactory taskDependencyFactory,
-            FileCollectionFactory fileCollectionFactory,
-            DomainObjectCollectionFactory domainObjectCollectionFactory,
-            NamedObjectInstantiator namedObjectInstantiator
-        ) {
-            return new DefaultObjectFactory(
-                instantiatorFactory.decorate(services),
-                namedObjectInstantiator,
-                directoryFileTreeFactory,
-                patternSetFactory,
-                propertyFactory,
-                filePropertyFactory,
-                taskDependencyFactory,
-                fileCollectionFactory,
-                domainObjectCollectionFactory);
-        }
+//        @Provides
+//        InstantiatorFactory createInstantiatorFactory() {
+//            return new DefaultInstantiatorFactory(
+//                new DefaultCrossBuildInMemoryCacheFactory(
+//                    new DefaultListenerManager(Global.class)), emptyList(),
+//                new OutputPropertyRoleAnnotationHandler(emptyList()));
+//        }
+//
+//        @Provides
+//        ObjectFactory createObjectFactory(
+//            InstantiatorFactory instantiatorFactory,
+//            ServiceRegistry services,
+//            Factory<PatternSet> patternSetFactory,
+//            DirectoryFileTreeFactory directoryFileTreeFactory,
+//            PropertyFactory propertyFactory,
+//            FilePropertyFactory filePropertyFactory,
+//            TaskDependencyFactory taskDependencyFactory,
+//            FileCollectionFactory fileCollectionFactory,
+//            DomainObjectCollectionFactory domainObjectCollectionFactory,
+//            NamedObjectInstantiator namedObjectInstantiator
+//        ) {
+//            return new DefaultObjectFactory(
+//                instantiatorFactory.decorate(services),
+//                namedObjectInstantiator,
+//                directoryFileTreeFactory,
+//                patternSetFactory,
+//                propertyFactory,
+//                filePropertyFactory,
+//                taskDependencyFactory,
+//                fileCollectionFactory,
+//                domainObjectCollectionFactory);
+//        }
 
         @Nonnull
         @Provides
@@ -174,13 +163,13 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
             FilteringClassLoader.Spec filterSpec = new FilteringClassLoader.Spec();
             FilteringClassLoader modelClassLoader = new FilteringClassLoader(parent, filterSpec);
 
-            ClassLoaderCache classLoaderCache = new ClassLoaderCache();
             return new PayloadSerializer(
                 new WellKnownClassLoaderRegistry(
                     new DefaultPayloadClassLoaderRegistry(
                         classLoaderCache,
                         new ModelClassLoaderFactory(modelClassLoader))));
         }
+
 
         @Provides
         PatternSpecFactory createPatternSpecFactory(ListenerManager listenerManager) {
@@ -258,7 +247,14 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
         }
 
         @Provides
-        ManagedFactoryRegistry createManagedFactoryRegistry(NamedObjectInstantiator namedObjectInstantiator, InstantiatorFactory instantiatorFactory, PropertyFactory propertyFactory, FileCollectionFactory fileCollectionFactory, FileFactory fileFactory, FilePropertyFactory filePropertyFactory) {
+        ManagedFactoryRegistry createManagedFactoryRegistry(
+            NamedObjectInstantiator namedObjectInstantiator,
+            InstantiatorFactory instantiatorFactory,
+            PropertyFactory propertyFactory,
+            FileCollectionFactory fileCollectionFactory,
+            FileFactory fileFactory,
+            FilePropertyFactory filePropertyFactory
+        ) {
             return new DefaultManagedFactoryRegistry().withFactories(
                 instantiatorFactory.getManagedFactory(),
                 new ManagedFactories.ConfigurableFileCollectionManagedFactory(fileCollectionFactory),
@@ -276,7 +272,7 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
         }
 
         @Provides
-        InternalProblems createInternalProblems(PayloadSerializer payloadSerializer, ServiceRegistry serviceRegistry, IsolatableFactory isolatableFactory, IsolatableSerializerRegistry isolatableSerializerRegistry, InstantiatorFactory instantiatorFactory) {
+        InternalProblems createInternalProblems(PayloadSerializer payloadSerializer, ServiceRegistry serviceRegistry, IsolatableFactory isolatableFactory, IsolatableSerializerRegistry isolatableSerializerRegistry) {
             return new DefaultProblems(
                 new WorkerProblemEmitter(responder),
                 null,
@@ -290,15 +286,15 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
             );
         }
 
-        @Provides
-        TaskDependencyFactory createTaskDependencyFactory() {
-            return DefaultTaskDependencyFactory.withNoAssociatedProject();
-        }
-
-        @Provides
-        DomainObjectCollectionFactory createDomainObjectCollectionFactory(InstantiatorFactory instantiatorFactory, ServiceRegistry services) {
-            return new DefaultDomainObjectCollectionFactory(instantiatorFactory, services, CollectionCallbackActionDecorator.NOOP, MutationGuards.identity());
-        }
+//        @Provides
+//        TaskDependencyFactory createTaskDependencyFactory() {
+//            return DefaultTaskDependencyFactory.withNoAssociatedProject();
+//        }
+//
+//        @Provides
+//        DomainObjectCollectionFactory createDomainObjectCollectionFactory(InstantiatorFactory instantiatorFactory, ServiceRegistry services) {
+//            return new DefaultDomainObjectCollectionFactory(instantiatorFactory, services, CollectionCallbackActionDecorator.NOOP, MutationGuards.identity());
+//        }
     }
 
     @Override
@@ -309,13 +305,14 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
         connection.addIncoming(RequestProtocol.class, this);
         responder = connection.addOutgoing(ResponseProtocol.class);
         ServiceRegistry parentServices = workerProcessContext.getServiceRegistry();
+//        parentServices.getAll()
 //        DefaultProblems internalProblems = (DefaultProblems) parentServices.get(InternalProblems.class);
         DefaultProblems.problemSummarizer = new WorkerProblemEmitter(responder);
 
         workerLogEventListener = parentServices.get(WorkerLogEventListener.class);
         RequestArgumentSerializers argumentSerializers = new RequestArgumentSerializers();
         try {
-            ServiceRegistry parentServices = workerProcessContext.getServiceRegistry();
+//            ServiceRegistry parentServices = workerProcessContext.getServiceRegistry();
             if (instantiatorFactory == null) {
                 instantiatorFactory = new DefaultInstantiatorFactory(new BasicClassCacheFactory(), Collections.emptyList(), new BasicPropertyRoleAnnotationHandler());
             }
@@ -325,14 +322,14 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
                 .provider(registration -> {
                     // Make the argument serializers available so work implementations can register their own serializers
                     registration.add(RequestArgumentSerializers.class, argumentSerializers);
-//                    registration.add(InstantiatorFactory.class, instantiatorFactory);
+                    registration.add(InstantiatorFactory.class, instantiatorFactory);
                     // TODO we should inject a worker-api specific implementation of InternalProblems here
-                    registration.addProvider(new ProblemsServiceProvider(responder, null));
+                    registration.addProvider(new ProblemsServiceProvider(responder, instantiatorFactory));
                 })
                 .build();
 
             Class<?> workerImplementation = Class.forName(workerImplementationName);
-            implementation = Cast.uncheckedNonnullCast(serviceRegistry.get(InstantiatorFactory.class).inject(serviceRegistry).newInstance(workerImplementation));
+            implementation = Cast.uncheckedNonnullCast(instantiatorFactory.inject(serviceRegistry).newInstance(workerImplementation));
         } catch (Exception e) {
             failure = e;
         }

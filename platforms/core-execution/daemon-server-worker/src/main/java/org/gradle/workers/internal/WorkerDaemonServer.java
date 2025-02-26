@@ -40,6 +40,7 @@ import org.gradle.api.resources.ReadableResource;
 import org.gradle.api.resources.ResourceHandler;
 import org.gradle.api.resources.TextResourceFactory;
 import org.gradle.cache.UnscopedCacheBuilderFactory;
+import org.gradle.cache.internal.ClassCacheFactory;
 import org.gradle.cache.internal.scopes.DefaultBuildTreeScopedCacheBuilderFactory;
 import org.gradle.cache.scopes.BuildTreeScopedCacheBuilderFactory;
 import org.gradle.initialization.BuildCancellationToken;
@@ -66,6 +67,7 @@ import org.gradle.internal.state.ManagedFactoryRegistry;
 import org.gradle.process.internal.DefaultExecActionFactory;
 import org.gradle.process.internal.ExecFactory;
 import org.gradle.process.internal.worker.RequestHandler;
+import org.gradle.process.internal.worker.request.IsolatableSerializerRegistry;
 import org.gradle.process.internal.worker.request.RequestArgumentSerializers;
 
 import javax.annotation.Nonnull;
@@ -96,9 +98,57 @@ public class WorkerDaemonServer implements RequestHandler<TransportableActionExe
             .provider(new WorkerSharedGlobalScopeServices(ClassPath.EMPTY))
             .provider(new WorkerDaemonServices())
             .provider(new WorkerSharedBuildSessionScopeServices())
-            .build();
+            .provider(new ServiceRegistrationProvider() {
+//                          @Provides
+//                          IsolatableSerializerRegistry createIsolatableSerializerRegistry(
+//                              ManagedFactoryRegistry managedFactoryRegistry,
+//                              ClassLoaderHierarchyHasher classLoaderHierarchyHasher
+//                          ) {
+//                              return new IsolatableSerializerRegistry(classLoaderHierarchyHasher, managedFactoryRegistry);
+//                          }
+                      }
+//                registration -> {
+//                    registration.add(InstantiatorFactory.class, new DefaultInstantiatorFactory(new BasicClassCacheFactory(), Collections.emptyList(), new BasicPropertyRoleAnnotationHandler()));
+//
+//                }
+            )
+                .
+
+            build();
     }
 
+    /**
+     * A {@link ClassCacheFactory} that holds strong references to all keys and values. This simple
+     * implementation differs from that of the Gradle Daemon, as the lifecycle for a worker process
+     * is much simpler than that of the daemon.
+     */
+//    private static class BasicClassCacheFactory implements ClassCacheFactory {
+//
+//        @Override
+//        public <V> Cache<Class<?>, V> newClassCache() {
+//            return new MapBackedCache<>(new ConcurrentHashMap<>());
+//        }
+//
+//        @Override
+//        public <V> Cache<Class<?>, V> newClassMap() {
+//            return new MapBackedCache<>(new ConcurrentHashMap<>());
+//        }
+//
+//    }
+//
+//    private static class BasicPropertyRoleAnnotationHandler implements PropertyRoleAnnotationHandler {
+//        @Override
+//        public Set<Class<? extends Annotation>> getAnnotationTypes() {
+//            return Collections.emptySet();
+//        }
+//
+//        @Override
+//        public void applyRoleTo(ModelObject owner, Object target) {
+//            if (target instanceof PropertyInternal) {
+//                ((PropertyInternal<?>) target).attachProducer(owner);
+//            }
+//        }
+//    }
     @Override
     public DefaultWorkResult run(TransportableActionExecutionSpec spec) {
         try {
