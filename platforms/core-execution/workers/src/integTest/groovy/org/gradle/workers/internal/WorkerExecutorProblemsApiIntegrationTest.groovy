@@ -21,7 +21,6 @@ import org.gradle.api.problems.Severity
 import org.gradle.api.problems.internal.TaskLocation
 import org.gradle.integtests.fixtures.AbstractIntegrationSpec
 import org.gradle.integtests.fixtures.BuildOperationsFixture
-import org.gradle.internal.jvm.Jvm
 import org.gradle.operations.problems.ProblemUsageProgressDetails
 import org.gradle.workers.fixtures.WorkerExecutorFixture
 

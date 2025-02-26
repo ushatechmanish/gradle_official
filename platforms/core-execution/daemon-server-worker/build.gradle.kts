@@ -29,12 +29,11 @@ dependencies {
 
     api(projects.classloaders)
     api(projects.coreApi)
-    api(projects.hashing)
     api(projects.modelCore)
     api(projects.requestHandlerWorker)
     api(projects.serialization)
     api(projects.serviceLookup)
-    api(projects.snapshots)
+    api(projects.snapshotsWorker)
 
     api(libs.inject)
     api(libs.jsr305)
@@ -45,6 +44,7 @@ dependencies {
     implementation(projects.fileCollections)
     implementation(projects.fileOperations)
     implementation(projects.fileTemp)
+    implementation(projects.hashing)
     implementation(projects.persistentCache)
     implementation(projects.serviceProvider)
     implementation(projects.serviceRegistryBuilder)

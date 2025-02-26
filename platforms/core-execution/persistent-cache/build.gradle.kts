@@ -9,18 +9,21 @@ description = """Persistent caches on disk and cross process locking.
 """.trimMargin()
 
 dependencies {
-    api(projects.buildProcessServices)
     api(projects.buildOperations)
     api(projects.concurrent)
     api(projects.files)
     api(projects.logging) {
         because("Because GradleVersion temporarily lives in the logging project until 9.0")
     }
+    api(projects.messaging)
     api(projects.serialization)
     api(projects.stdlibJavaExtensions)
 
     api(libs.jsr305)
 
+    implementation(projects.classloaders)
+    implementation(projects.buildProcessServices)
+    implementation(projects.functional)
     implementation(projects.io)
     implementation(projects.time)
 

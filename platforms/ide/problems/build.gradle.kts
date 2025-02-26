@@ -66,7 +66,7 @@ dependencies {
     implementation(projects.logging)
     implementation(projects.messaging)
     implementation(projects.serialization)
-    implementation(projects.snapshots)
+    implementation(projects.snapshotsWorker)
 
     implementation(libs.guava)
     implementation(libs.fastutil)

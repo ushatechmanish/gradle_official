@@ -66,6 +66,7 @@ import java.util.List;
 
 import static org.gradle.internal.classloader.ClassLoaderUtils.classFromContextLoader;
 
+@NonNullApi
 @ServiceScope({Scope.UserHome.class, Scope.Global.class})
 public class IsolatableSerializerRegistry extends DefaultSerializerRegistry implements IsolatableToBytesSerializer {
     private static final byte STRING_VALUE = (byte) 0;

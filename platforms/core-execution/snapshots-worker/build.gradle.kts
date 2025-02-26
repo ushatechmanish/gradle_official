@@ -8,10 +8,11 @@ description = "Tools to take immutable, comparable snapshots of files and other 
 gradlebuildJava.usedInWorkers()
 
 dependencies {
-    api(libs.guava)
+    api(projects.hashing)
+    api(projects.stdlibJavaExtensions)
+
     api(libs.jsr305)
 
-    implementation(projects.hashing)
 }
 tasks.isolatedProjectsIntegTest {
     enabled = false

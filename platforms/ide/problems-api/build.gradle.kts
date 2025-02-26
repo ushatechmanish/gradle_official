@@ -34,7 +34,7 @@ dependencies {
     api(projects.buildOperations)
     api(projects.enterpriseOperations)
     api(projects.serialization)
-    api(projects.snapshots)
+    api(projects.snapshotsWorker)
     api(projects.stdlibJavaExtensions)
 
     api(libs.guava)
