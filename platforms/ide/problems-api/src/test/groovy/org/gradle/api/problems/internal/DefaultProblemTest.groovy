@@ -21,6 +21,7 @@ import org.gradle.api.problems.ProblemGroup
 import org.gradle.api.problems.ProblemId
 import org.gradle.api.problems.Severity
 import org.gradle.internal.deprecation.Documentation
+import org.gradle.internal.isolation.IsolatableFactory
 import org.gradle.internal.operations.CurrentBuildOperationRef
 import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.internal.reflect.Instantiator
@@ -50,7 +51,7 @@ class DefaultProblemTest extends Specification {
     }
 
     def InternalProblemBuilder toBuilder(DefaultProblem problem) {
-        problem.toBuilder(new AdditionalDataBuilderFactory(), Mock(Instantiator), Mock(PayloadSerializer), isolatbleFactory)
+        problem.toBuilder(new AdditionalDataBuilderFactory(), Mock(Instantiator), Mock(PayloadSerializer), Mock(IsolatableFactory), Mock(IsolatableToBytesSerializer))
     }
 
     def "unbound builder result with modified #changedAspect is not equal"() {
