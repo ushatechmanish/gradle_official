@@ -18,7 +18,7 @@ package org.gradle.api.problems.internal;
 
 import org.gradle.internal.isolation.Isolatable;
 
-public interface NewIsolatableSerializer {
+public interface IsolatableToBytesSerializer {
     Isolatable<?> deserialize(byte[] bytes);
 
     byte[] serialize(Isolatable<?> isolatable);

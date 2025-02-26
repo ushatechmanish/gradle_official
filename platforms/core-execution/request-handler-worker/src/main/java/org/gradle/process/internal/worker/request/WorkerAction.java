@@ -92,7 +92,6 @@ import java.util.concurrent.CountDownLatch;
 /**
  * Worker-side implementation of {@link RequestProtocol} executing actions.
  */
-@SuppressWarnings("unused")
 public class WorkerAction implements Action<WorkerProcessContext>, Serializable, RequestProtocol, StreamFailureHandler, Stoppable, StreamCompletion {
     private final String workerImplementationName;
     private transient CountDownLatch completed;
@@ -120,39 +119,6 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
             serviceRegistration.add(FileLookup.class, DefaultFileLookup.class);
             serviceRegistration.add(FilePropertyFactory.class, FileFactory.class, DefaultFilePropertyFactory.class);
         }
-
-//        @Provides
-//        InstantiatorFactory createInstantiatorFactory() {
-//            return new DefaultInstantiatorFactory(
-//                new DefaultCrossBuildInMemoryCacheFactory(
-//                    new DefaultListenerManager(Global.class)), emptyList(),
-//                new OutputPropertyRoleAnnotationHandler(emptyList()));
-//        }
-//
-//        @Provides
-//        ObjectFactory createObjectFactory(
-//            InstantiatorFactory instantiatorFactory,
-//            ServiceRegistry services,
-//            Factory<PatternSet> patternSetFactory,
-//            DirectoryFileTreeFactory directoryFileTreeFactory,
-//            PropertyFactory propertyFactory,
-//            FilePropertyFactory filePropertyFactory,
-//            TaskDependencyFactory taskDependencyFactory,
-//            FileCollectionFactory fileCollectionFactory,
-//            DomainObjectCollectionFactory domainObjectCollectionFactory,
-//            NamedObjectInstantiator namedObjectInstantiator
-//        ) {
-//            return new DefaultObjectFactory(
-//                instantiatorFactory.decorate(services),
-//                namedObjectInstantiator,
-//                directoryFileTreeFactory,
-//                patternSetFactory,
-//                propertyFactory,
-//                filePropertyFactory,
-//                taskDependencyFactory,
-//                fileCollectionFactory,
-//                domainObjectCollectionFactory);
-//        }
 
         @Nonnull
         @Provides
@@ -231,11 +197,6 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
             return PropertyHost.NO_OP;
         }
 
-//        @Provides
-//        protected FileCollectionFactory createFileCollectionFactory(FileCollectionFactory parent, PathToFileResolver fileResolver, TaskDependencyFactory taskDependencyFactory, PropertyHost propertyHost) {
-//            return parent.forChildScope(fileResolver, taskDependencyFactory, propertyHost);
-//        }
-
         @Provides
         CrossBuildInMemoryCacheFactory createCrossBuildInMemoryCacheFactory(ListenerManager listenerManager) {
             return new DefaultCrossBuildInMemoryCacheFactory(listenerManager);
@@ -285,16 +246,6 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
                 isolatableSerializerRegistry
             );
         }
-
-//        @Provides
-//        TaskDependencyFactory createTaskDependencyFactory() {
-//            return DefaultTaskDependencyFactory.withNoAssociatedProject();
-//        }
-//
-//        @Provides
-//        DomainObjectCollectionFactory createDomainObjectCollectionFactory(InstantiatorFactory instantiatorFactory, ServiceRegistry services) {
-//            return new DefaultDomainObjectCollectionFactory(instantiatorFactory, services, CollectionCallbackActionDecorator.NOOP, MutationGuards.identity());
-//        }
     }
 
     @Override
@@ -305,14 +256,11 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
         connection.addIncoming(RequestProtocol.class, this);
         responder = connection.addOutgoing(ResponseProtocol.class);
         ServiceRegistry parentServices = workerProcessContext.getServiceRegistry();
-//        parentServices.getAll()
-//        DefaultProblems internalProblems = (DefaultProblems) parentServices.get(InternalProblems.class);
         DefaultProblems.problemSummarizer = new WorkerProblemEmitter(responder);
 
         workerLogEventListener = parentServices.get(WorkerLogEventListener.class);
         RequestArgumentSerializers argumentSerializers = new RequestArgumentSerializers();
         try {
-//            ServiceRegistry parentServices = workerProcessContext.getServiceRegistry();
             if (instantiatorFactory == null) {
                 instantiatorFactory = new DefaultInstantiatorFactory(new BasicClassCacheFactory(), Collections.emptyList(), new BasicPropertyRoleAnnotationHandler());
             }

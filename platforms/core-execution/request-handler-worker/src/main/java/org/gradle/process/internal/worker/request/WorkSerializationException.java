@@ -19,8 +19,8 @@ package org.gradle.process.internal.worker.request;
 import org.gradle.internal.exceptions.Contextual;
 
 @Contextual
-class WorkSerializationException extends RuntimeException {
-    WorkSerializationException(String message, Throwable cause) {
+public class WorkSerializationException extends RuntimeException {
+    public WorkSerializationException(String message, Throwable cause) {
         super(message, cause);
     }
 }

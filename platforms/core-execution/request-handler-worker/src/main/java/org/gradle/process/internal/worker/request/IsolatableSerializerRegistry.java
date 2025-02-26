@@ -21,7 +21,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.attributes.Attribute;
-import org.gradle.api.problems.internal.NewIsolatableSerializer;
+import org.gradle.api.problems.internal.IsolatableToBytesSerializer;
 import org.gradle.internal.Cast;
 import org.gradle.internal.hash.ClassLoaderHierarchyHasher;
 import org.gradle.internal.hash.HashCode;
@@ -67,7 +67,7 @@ import java.util.List;
 import static org.gradle.internal.classloader.ClassLoaderUtils.classFromContextLoader;
 
 @ServiceScope({Scope.UserHome.class, Scope.Global.class})
-public class IsolatableSerializerRegistry extends DefaultSerializerRegistry implements NewIsolatableSerializer {
+public class IsolatableSerializerRegistry extends DefaultSerializerRegistry implements IsolatableToBytesSerializer {
     private static final byte STRING_VALUE = (byte) 0;
     private static final byte BOOLEAN_VALUE = (byte) 1;
     private static final byte SHORT_VALUE = (byte) 2;

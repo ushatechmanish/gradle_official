@@ -51,7 +51,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class DefaultProblemBuilder implements InternalProblemBuilder {
-    private final NewIsolatableSerializer isolatableSerializer;
+    private final IsolatableToBytesSerializer isolatableSerializer;
     @Nullable
     private ProblemStream problemStream;
 
@@ -72,7 +72,7 @@ public class DefaultProblemBuilder implements InternalProblemBuilder {
     private final IsolatableFactory isolatableFactory;
     private ProblemDiagnostics diagnostics;
 
-    public DefaultProblemBuilder(AdditionalDataBuilderFactory additionalDataBuilderFactory, Instantiator instantiator, PayloadSerializer payloadSerializer, IsolatableFactory isolatableFactory, NewIsolatableSerializer isolatableSerializer) {
+    public DefaultProblemBuilder(AdditionalDataBuilderFactory additionalDataBuilderFactory, Instantiator instantiator, PayloadSerializer payloadSerializer, IsolatableFactory isolatableFactory, IsolatableToBytesSerializer isolatableSerializer) {
         this.additionalDataBuilderFactory = additionalDataBuilderFactory;
         this.instantiator = instantiator;
         this.payloadSerializer = payloadSerializer;
@@ -82,12 +82,12 @@ public class DefaultProblemBuilder implements InternalProblemBuilder {
         this.solutions = new ArrayList<String>();
     }
 
-    public DefaultProblemBuilder(@Nullable ProblemStream problemStream, AdditionalDataBuilderFactory additionalDataBuilderFactory, Instantiator instantiator, PayloadSerializer payloadSerializer, IsolatableFactory isolatableFactory, NewIsolatableSerializer isolatableSerializer) {
+    public DefaultProblemBuilder(@Nullable ProblemStream problemStream, AdditionalDataBuilderFactory additionalDataBuilderFactory, Instantiator instantiator, PayloadSerializer payloadSerializer, IsolatableFactory isolatableFactory, IsolatableToBytesSerializer isolatableSerializer) {
         this(additionalDataBuilderFactory, instantiator, payloadSerializer, isolatableFactory, isolatableSerializer);
         this.problemStream = problemStream;
     }
 
-    public DefaultProblemBuilder(InternalProblem problem, AdditionalDataBuilderFactory additionalDataBuilderFactory, Instantiator instantiator, PayloadSerializer payloadSerializer, IsolatableFactory isolatableFactory, NewIsolatableSerializer isolatableSerializer) {
+    public DefaultProblemBuilder(InternalProblem problem, AdditionalDataBuilderFactory additionalDataBuilderFactory, Instantiator instantiator, PayloadSerializer payloadSerializer, IsolatableFactory isolatableFactory, IsolatableToBytesSerializer isolatableSerializer) {
         this(additionalDataBuilderFactory, instantiator, payloadSerializer, isolatableFactory, isolatableSerializer);
         this.id = problem.getDefinition().getId();
         this.contextualLabel = problem.getContextualLabel();

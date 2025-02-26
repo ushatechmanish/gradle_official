@@ -42,7 +42,7 @@ public class DefaultProblems implements InternalProblems {
     private final Instantiator instantiator;
     private final PayloadSerializer payloadSerializer;
     private final IsolatableFactory isolatableFactory;
-    private final NewIsolatableSerializer isolatableSerializer;
+    private final IsolatableToBytesSerializer isolatableSerializer;
 
     public DefaultProblems(
         ProblemSummarizer problemSummarizer,
@@ -53,7 +53,7 @@ public class DefaultProblems implements InternalProblems {
         Instantiator instantiator,
         PayloadSerializer payloadSerializer,
         IsolatableFactory isolatableFactory,
-        NewIsolatableSerializer isolatableSerializer
+        IsolatableToBytesSerializer isolatableSerializer
     ) {
         if (DefaultProblems.problemSummarizer == null) {
             DefaultProblems.problemSummarizer = problemSummarizer;
@@ -115,7 +115,7 @@ public class DefaultProblems implements InternalProblems {
     }
 
     @Override
-    public NewIsolatableSerializer getIsolatableSerializer() {
+    public IsolatableToBytesSerializer getIsolatableSerializer() {
         return isolatableSerializer;
     }
 }

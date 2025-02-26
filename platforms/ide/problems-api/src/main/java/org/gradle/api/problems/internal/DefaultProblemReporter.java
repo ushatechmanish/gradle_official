@@ -42,7 +42,7 @@ public class DefaultProblemReporter implements InternalProblemReporter {
     private final Instantiator instantiator;
     private final PayloadSerializer payloadSerializer;
     private final IsolatableFactory isolatableFactory;
-    private final NewIsolatableSerializer isolatableSerializer;
+    private final IsolatableToBytesSerializer isolatableSerializer;
 
     public DefaultProblemReporter(
         ProblemSummarizer problemSummarizer,
@@ -54,7 +54,7 @@ public class DefaultProblemReporter implements InternalProblemReporter {
         Instantiator instantiator,
         PayloadSerializer payloadSerializer,
         IsolatableFactory isolatableFactory,
-        NewIsolatableSerializer isolatableSerializer
+        IsolatableToBytesSerializer isolatableSerializer
     ) {
         this.problemSummarizer = problemSummarizer;
         this.problemStream = problemStream;

@@ -107,7 +107,7 @@ public class DefaultProblem implements Serializable, InternalProblem {
     }
 
     @Override
-    public InternalProblemBuilder toBuilder(AdditionalDataBuilderFactory additionalDataBuilderFactory, Instantiator instantiator, PayloadSerializer payloadSerializer, IsolatableFactory isolatbleFactory, NewIsolatableSerializer isolatableSerializer) {
+    public InternalProblemBuilder toBuilder(AdditionalDataBuilderFactory additionalDataBuilderFactory, Instantiator instantiator, PayloadSerializer payloadSerializer, IsolatableFactory isolatbleFactory, IsolatableToBytesSerializer isolatableSerializer) {
         return new DefaultProblemBuilder(this, additionalDataBuilderFactory, instantiator, payloadSerializer, isolatbleFactory, isolatableSerializer);
     }
 

@@ -21,7 +21,7 @@ import org.gradle.api.problems.ProblemId;
 import org.gradle.api.problems.internal.GradleCoreProblemGroup;
 import org.gradle.api.problems.internal.InternalProblem;
 import org.gradle.api.problems.internal.InternalProblemBuilder;
-import org.gradle.api.problems.internal.NewIsolatableSerializer;
+import org.gradle.api.problems.internal.IsolatableToBytesSerializer;
 import org.gradle.api.problems.internal.TypeValidationData;
 import org.gradle.api.problems.internal.TypeValidationDataSpec;
 import org.gradle.internal.isolation.IsolatableFactory;
@@ -35,9 +35,9 @@ import java.util.Optional;
 public class DefaultTypeAwareProblemBuilder extends DelegatingProblemBuilder implements TypeAwareProblemBuilder {
 
     private final IsolatableFactory isolatbleFactory;
-    private final NewIsolatableSerializer isolatableSerializer;
+    private final IsolatableToBytesSerializer isolatableSerializer;
 
-    public DefaultTypeAwareProblemBuilder(InternalProblemBuilder problemBuilder, IsolatableFactory isolatbleFactory, NewIsolatableSerializer isolatableSerializer) {
+    public DefaultTypeAwareProblemBuilder(InternalProblemBuilder problemBuilder, IsolatableFactory isolatbleFactory, IsolatableToBytesSerializer isolatableSerializer) {
         super(problemBuilder);
         this.isolatbleFactory = isolatbleFactory;
         this.isolatableSerializer = isolatableSerializer;
