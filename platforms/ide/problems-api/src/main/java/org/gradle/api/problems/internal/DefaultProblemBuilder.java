@@ -40,14 +40,11 @@ import org.gradle.tooling.internal.provider.serialization.SerializedPayload;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class DefaultProblemBuilder implements InternalProblemBuilder {
@@ -353,38 +350,14 @@ public class DefaultProblemBuilder implements InternalProblemBuilder {
 
     @Override
     public <T extends AdditionalData> InternalProblemBuilder additionalData(Class<T> type, Action<? super T> config) {
-//        validateMethods(type);
-
         AdditionalData additionalDataInstance = createAdditionalData(type, config);
-        Map<String, Object> methodValues = getAdditionalDataMap(type, additionalDataInstance);
         Isolatable<AdditionalData> isolated = isolatableFactory.isolate(additionalDataInstance);
 
         SerializedPayload serializedBaseClass = getPayloadSerializer().serialize(type);
         byte[] serialized = this.isolatableSerializer.serialize(isolated);
 
         this.additionalData = new DefaultTypedAdditionalData(serializedBaseClass, serialized);
-//        this.additionalData = ;
         return this;
-    }
-
-    @Nonnull
-    private static <T extends AdditionalData> Map<String, Object> getAdditionalDataMap(Class<T> type, AdditionalData additionalDataInstance) {
-        Map<String, Object> methodValues = new HashMap<String, Object>();
-        for (Method method : type.getMethods()) {
-            Class<?> returnType = method.getReturnType();
-            if (!void.class.equals(returnType) && method.getParameterCount() == 0) {
-                try {
-                    methodValues.put(method.getName(), additionalDataInstance.getClass().getMethod(method.getName(), method.getParameterTypes()).invoke(additionalDataInstance));
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                } catch (InvocationTargetException e) {
-                    throw new RuntimeException(e);
-                } catch (NoSuchMethodException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-        return methodValues;
     }
 
     @Nonnull

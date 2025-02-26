@@ -88,10 +88,6 @@ public class ProblemAdditionalDataRemapper implements BuildEventConsumer {
 
         byte[] isolatableBytes = serializedAdditionalData.getIsolatable();
 
-
-//        new ClasspathInferer().getClassPathFor(type, classPath);
-
-
         ClassLoader typeClassLoader = type.getClassLoader();
         FilteringClassLoader.Spec filterSpec = new FilteringClassLoader.Spec();
         filterSpec.allowClass(type);
@@ -113,12 +109,6 @@ public class ProblemAdditionalDataRemapper implements BuildEventConsumer {
             Isolatable<?> deserialize = isolatableSerializerRegistry.deserialize(isolatableBytes);
             return deserialize.isolate();
         });
-//        Isolatable<?> deserialize = isolatableSerializerRegistry.deserialize(isolatableBytes);
-//        deserialize.coerce(type);
-
-//        Object object = isolatableBytes.coerce(type);
-//        Object proxy = createProxy(type, state);
-
         ((DefaultProblemDetails) details).setAdditionalData(new DefaultInternalProxiedAdditionalData(state, o, serializedType));
     }
 
