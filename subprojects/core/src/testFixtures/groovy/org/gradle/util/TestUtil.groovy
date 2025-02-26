@@ -408,6 +408,8 @@ class TestProblems implements InternalProblems {
             new ExceptionProblemRegistry(),
             null,
             new MockInstantiator(),
+            null,
+            null,
             null
         )
     }
