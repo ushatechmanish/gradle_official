@@ -63,23 +63,10 @@ public class ClientSidePayloadClassLoaderFactory implements PayloadClassLoaderFa
             }
         }
 
-//        private final Collection<String> exclusions;
 
         public MixInClassLoader(String name, ClassLoader parent, List<URL> classPath) {
             super(name, parent, classPath);
-//            this.exclusions = exclusions;
         }
-
-//        @Override
-//        protected boolean shouldTransform(String name) {
-//            for (String exclusion : exclusions) {
-//                if (name.startsWith(exclusion)) {
-//                    return false;
-//                }
-//            }
-//            return true;
-//        }
-
 
         @Override
         public Class<?> loadClass(String name) throws ClassNotFoundException {
@@ -88,15 +75,6 @@ public class ClientSidePayloadClassLoaderFactory implements PayloadClassLoaderFa
             }
             return super.loadClass(name);
         }
-
-//        @Override
-//        @Nullable
-//        protected Class<?> findClass(String name) throws ClassNotFoundException {
-//            if (!name.startsWith("org.gradle.api.provider.")) {
-//                return getParent().loadClass(name);
-//            }
-//            return super.findClass(name);
-//        }
 
         @Override
         protected byte[] transform(String className, byte[] bytes) {

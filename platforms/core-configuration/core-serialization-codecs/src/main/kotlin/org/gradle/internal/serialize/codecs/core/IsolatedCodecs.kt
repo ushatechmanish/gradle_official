@@ -69,7 +69,7 @@ object IsolatedSetCodec : Codec<IsolatedSet> {
     }
 
     override suspend fun ReadContext.decode(): IsolatedSet {
-        val elements = readNonNull<ImmutableSet<org.gradle.internal.isolation.Isolatable<*>>>()
+        val elements = readNonNull<ImmutableSet<Isolatable<*>>>()
         return IsolatedSet(elements)
     }
 }
@@ -81,7 +81,7 @@ object IsolatedListCodec : Codec<IsolatedList> {
     }
 
     override suspend fun ReadContext.decode(): IsolatedList {
-        val elements = readNonNull<ImmutableList<org.gradle.internal.isolation.Isolatable<*>>>()
+        val elements = readNonNull<ImmutableList<Isolatable<*>>>()
         return IsolatedList(elements)
     }
 }
@@ -93,7 +93,7 @@ object IsolatedMapCodec : Codec<IsolatedMap> {
     }
 
     override suspend fun ReadContext.decode(): IsolatedMap {
-        val elements = readNonNull<ImmutableList<MapEntrySnapshot<org.gradle.internal.isolation.Isolatable<*>>>>()
+        val elements = readNonNull<ImmutableList<MapEntrySnapshot<Isolatable<*>>>>()
         return IsolatedMap(elements)
     }
 }
@@ -121,7 +121,7 @@ object IsolatedArrayCodec : Codec<IsolatedArray> {
 
     override suspend fun ReadContext.decode(): IsolatedArray {
         val arrayType = readClass()
-        val elements = readNonNull<ImmutableList<org.gradle.internal.isolation.Isolatable<*>>>()
+        val elements = readNonNull<ImmutableList<Isolatable<*>>>()
         return IsolatedArray(elements, arrayType)
     }
 }
@@ -185,7 +185,7 @@ class IsolatedManagedValueCodec(private val managedFactory: ManagedFactoryRegist
     override suspend fun ReadContext.decode(): IsolatedManagedValue {
         val targetType = readClass()
         val factoryId = readSmallInt()
-        val state = readNonNull<org.gradle.internal.isolation.Isolatable<Any>>()
+        val state = readNonNull<Isolatable<Any>>()
         return IsolatedManagedValue(targetType, managedFactory.lookup(factoryId), state)
     }
 }
