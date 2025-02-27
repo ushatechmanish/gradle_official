@@ -13,6 +13,7 @@ errorprone {
 dependencies {
     api(projects.baseServices)
     api(projects.buildOperations)
+    api(projects.enterpriseOperations)
     api(projects.configurationCache)
     api(projects.core)
     api(projects.coreApi)
