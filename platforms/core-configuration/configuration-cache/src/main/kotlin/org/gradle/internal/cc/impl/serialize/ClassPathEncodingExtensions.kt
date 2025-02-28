@@ -19,11 +19,9 @@ package org.gradle.internal.cc.impl.serialize
 import org.gradle.internal.classpath.ClassPath
 import org.gradle.internal.classpath.DefaultClassPath
 import org.gradle.internal.classpath.TransformedClassPath
-import org.gradle.internal.serialize.Decoder
-import org.gradle.internal.serialize.graph.WriteContext
-import org.gradle.internal.serialize.graph.readFile
-import org.gradle.internal.serialize.graph.writeCollection
 import org.gradle.internal.serialize.graph.ReadContext
+import org.gradle.internal.serialize.graph.WriteContext
+import org.gradle.internal.serialize.graph.writeCollection
 
 
 internal
