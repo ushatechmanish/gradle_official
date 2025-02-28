@@ -71,76 +71,64 @@ class DefaultFileSystemTreeDecoder(
 ) : FileSystemTreeDecoder {
 
     private
-    class FuturePathSegment {
+    class FutureFile {
 
         private
         val latch = CountDownLatch(1)
 
         private
-        var segment: PathSegment? = null
+        var file: File? = null
 
-        fun complete(pathSegment: PathSegment) {
-            this.segment = pathSegment
+        fun complete(file: File) {
+            this.file = file
             latch.countDown()
         }
 
-        fun get(): PathSegment {
+        fun get(): File {
             if (!latch.await(1, TimeUnit.MINUTES)) {
                 throw TimeoutException("Timeout while waiting for file")
             }
-            return segment!!
+            return file!!
         }
     }
 
-    private data class PathSegment(
-        val isFinal: Boolean,
-        val segment: String,
-        val parent: Int?,
-    )
-
-    private val segments = ConcurrentHashMap<Int, Any>()
+    private val files = ConcurrentHashMap<Int, Any>()
 
     private
     val reader = thread(isDaemon = true) {
+        val segments = HashMap<Int, String>()
         globalContext.use { context ->
             while (true) {
                 val id = context.readSmallInt()
                 if (id == EOF) break
 
-                val segment = PathSegment(
-                    context.readBoolean(),
-                    context.readString(),
-                    context.readNullableSmallInt()
-                )
-                segments.compute(id) { _, value ->
-                    when (value) {
-                        is FuturePathSegment -> value.complete(segment)
-                        else -> require(value == null)
+                val isFinal = context.readBoolean()
+                val segment = context.readString()
+                val parent = context.readNullableSmallInt()
+
+                val path = parent?.let { segments[it] + "/" + segment } ?: "/$segment"
+                segments[id] = path
+
+                if (isFinal) {
+                    files.compute(id) { _, value ->
+                        val file = File(path)
+                        when (value) {
+                            is FutureFile -> value.complete(file)
+                            else -> require(value == null)
+                        }
+                        file
                     }
-                    segment
                 }
             }
         }
     }
 
-    override fun readFile(readContext: ReadContext): File {
-        val index = readContext.readSmallInt()
-        val path = mutableListOf<String>()
-        var currentSegment = segments.computeIfAbsent(index) { FuturePathSegment() }
-
-        while (true) {
-            val segment = when (currentSegment) {
-                is PathSegment -> currentSegment
-                is FuturePathSegment -> currentSegment.get()
-                else -> error("$currentSegment is unsupported")
-            }
-
-            path.add(segment.segment)
-            currentSegment = segment.parent?.let { segments.computeIfAbsent(it) { FuturePathSegment() } } ?: break
+    override fun readFile(readContext: ReadContext): File =
+        when (val file = files.computeIfAbsent(readContext.readSmallInt()) { FutureFile() }) {
+            is FutureFile -> file.get()
+            is File -> file
+            else -> error("$file is unsupported")
         }
-        return File("/${path.reversed().joinToString("/")}")
-
-    }
 
     override suspend fun readTree() {
         // no-op
