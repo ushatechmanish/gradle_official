@@ -296,7 +296,7 @@ class DefaultConfigurationCacheIO internal constructor(
         if (true) {
             val (globalContext, _) = readContextFor(fileSystemTreeFile)
             globalContext.push(IsolateOwners.OwnerGradle(host.currentBuild.gradle))
-            DefaultFileSystemTreeDecoder(globalContext, prefixedTree)
+            DefaultFileSystemTreeDecoder(globalContext)
         } else {
             InlineFileSystemTreeDecoder
         }
@@ -410,9 +410,7 @@ class DefaultConfigurationCacheIO internal constructor(
             host.currentBuild.gradle.owner.displayName.displayName + " state"
         }
         return withWriteContextFor(stateFile, profile, specialEncoders) { codecs ->
-            val result = action(ConfigurationCacheState(codecs, stateFile, ChildContextSource(stateFile), eventEmitter, host))
-            writeFileSystemTree()
-            result
+            action(ConfigurationCacheState(codecs, stateFile, ChildContextSource(stateFile), eventEmitter, host))
         }
     }
 

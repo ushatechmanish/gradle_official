@@ -16,7 +16,6 @@
 
 package org.gradle.internal.cc.impl.serialize
 
-import org.gradle.api.GradleException
 import org.gradle.internal.serialize.graph.CloseableReadContext
 import org.gradle.internal.serialize.graph.CloseableWriteContext
 import org.gradle.internal.serialize.graph.FilePrefixedTree
@@ -25,9 +24,15 @@ import org.gradle.internal.serialize.graph.FileSystemTreeDecoder
 import org.gradle.internal.serialize.graph.FileSystemTreeEncoder
 import org.gradle.internal.serialize.graph.ReadContext
 import org.gradle.internal.serialize.graph.WriteContext
-import org.gradle.internal.serialize.graph.withDebugFrame
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
+import kotlin.concurrent.thread
+
+private const val EOF = -1
+
 
 class DefaultFileSystemTreeEncoder(
     private val globalContext: CloseableWriteContext,
@@ -35,59 +40,113 @@ class DefaultFileSystemTreeEncoder(
 ) : FileSystemTreeEncoder {
 
     override fun writeFile(writeContext: WriteContext, file: File) {
-        writeContext.writeSmallInt(prefixedTree.insert(file))
+        val index = prefixedTree.insert(file)
+        writeContext.writeSmallInt(index)
     }
 
     override suspend fun writeTree() {
-        globalContext.withDebugFrame({ "File Tree" }) {
-            writePrefixedTreeNode(prefixedTree.compress())
-        }
+        // no-op
     }
 
     override fun close() {
-        globalContext.close()
+        globalContext.use {
+            it.writePrefixedTreeNode(prefixedTree.compress(), null)
+            it.writeSmallInt(EOF)
+        }
     }
 
-    private fun WriteContext.writePrefixedTreeNode(node: Node) {
-        writeNullableSmallInt(node.index)
+    private fun WriteContext.writePrefixedTreeNode(node: Node, parent: Node?) {
+        writeSmallInt(node.index)
+        writeBoolean(node.isFinal)
         writeString(node.segment)
-        writeSmallInt(node.children.size)
-        node.children.forEach { child ->
-            writeString(child.key)
-            writePrefixedTreeNode(child.value)
+        writeNullableSmallInt(parent?.index)
+        node.children.entries.forEach { child ->
+            writePrefixedTreeNode(child.value, node)
         }
     }
 }
 
 class DefaultFileSystemTreeDecoder(
     private val globalContext: CloseableReadContext,
-    private val prefixedTree: FilePrefixedTree
 ) : FileSystemTreeDecoder {
 
-    private val files = mutableMapOf<Int, File>()
+    private
+    class FuturePathSegment {
+
+        private
+        val latch = CountDownLatch(1)
+
+        private
+        var segment: PathSegment? = null
+
+        fun complete(pathSegment: PathSegment) {
+            this.segment = pathSegment
+            latch.countDown()
+        }
+
+        fun get(): PathSegment {
+            if (!latch.await(1, TimeUnit.MINUTES)) {
+                throw TimeoutException("Timeout while waiting for file")
+            }
+            return segment!!
+        }
+    }
+
+    private data class PathSegment(
+        val isFinal: Boolean,
+        val segment: String,
+        val parent: Int?,
+    )
+
+    private val segments = ConcurrentHashMap<Int, Any>()
+
+    private
+    val reader = thread(isDaemon = true) {
+        globalContext.use { context ->
+            while (true) {
+                val id = context.readSmallInt()
+                if (id == EOF) break
+
+                val segment = PathSegment(
+                    context.readBoolean(),
+                    context.readString(),
+                    context.readNullableSmallInt()
+                )
+                segments.compute(id) { _, value ->
+                    when (value) {
+                        is FuturePathSegment -> value.complete(segment)
+                        else -> require(value == null)
+                    }
+                    segment
+                }
+            }
+        }
+    }
 
     override fun readFile(readContext: ReadContext): File {
         val index = readContext.readSmallInt()
-        val file = files[index] ?: throw GradleException("Cannot read a file with index=$index")
-        return file
+        val path = mutableListOf<String>()
+        var currentSegment = segments.computeIfAbsent(index) { FuturePathSegment() }
+
+        while (true) {
+            val segment = when (currentSegment) {
+                is PathSegment -> currentSegment
+                is FuturePathSegment -> currentSegment.get()
+                else -> error("$currentSegment is unsupported")
+            }
+
+            path.add(segment.segment)
+            currentSegment = segment.parent?.let { segments.computeIfAbsent(it) { FuturePathSegment() } } ?: break
+        }
+        return File("/${path.reversed().joinToString("/")}")
+
     }
 
     override suspend fun readTree() {
-        files.putAll(prefixedTree.buildIndexes(globalContext.readPrefixedTreeNode()))
+        // no-op
     }
 
     override fun close() {
-        globalContext.close()
-    }
-
-    private fun ReadContext.readPrefixedTreeNode(): Node {
-        val index = readNullableSmallInt()
-        val segment = readString()
-        val childrenCount = readSmallInt()
-        val children = ConcurrentHashMap<String, Node>()
-        repeat(childrenCount) {
-            children[readString()] = readPrefixedTreeNode()
-        }
-        return Node(index, segment, children)
+        reader.join(TimeUnit.MINUTES.toMillis(1))
     }
 }

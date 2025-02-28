@@ -44,34 +44,30 @@ class FilePrefixedTreeTest {
         prefixedTree.insert(File("org/example/bar/Bar1"))
 
         val expectedTree = FilePrefixedTree.Node(
-            null,
-            "",
+            false, 0, "",
             mutableMapOf(
                 "org" to FilePrefixedTree.Node(
-                    null, "org",
+                    false, 1, "org",
                     mutableMapOf(
                         "example" to FilePrefixedTree.Node(
-                            null, "example",
+                            false, 2, "example",
                             mutableMapOf(
                                 "foo" to FilePrefixedTree.Node(
-                                    null, "foo",
+                                    false, 3, "foo",
                                     mutableMapOf(
                                         "Foo" to FilePrefixedTree.Node(
-                                            0,
-                                            "Foo",
+                                            true, 4, "Foo",
                                         )
                                     )
                                 ),
                                 "bar" to FilePrefixedTree.Node(
-                                    1, "bar",
+                                    true, 5, "bar",
                                     mutableMapOf(
                                         "Bar" to FilePrefixedTree.Node(
-                                            2, "Bar",
-                                            mutableMapOf()
+                                            true, 6, "Bar",
                                         ),
                                         "Bar1" to FilePrefixedTree.Node(
-                                            3, "Bar1",
-                                            mutableMapOf()
+                                            true, 7, "Bar1",
                                         )
                                     )
                                 )
@@ -92,11 +88,10 @@ class FilePrefixedTreeTest {
         prefixedTree.insert(File("org/example/company/bar/Bar"))
 
         val expectedCompressedTree = FilePrefixedTree.Node(
-            null,
-            "org/example/company",
+            false, 3, "org/example/company",
             mutableMapOf(
-                "foo/Foo" to FilePrefixedTree.Node(0, "foo/Foo"),
-                "bar/Bar" to FilePrefixedTree.Node(1, "bar/Bar")
+                "foo/Foo" to FilePrefixedTree.Node(true, 5, "foo/Foo"),
+                "bar/Bar" to FilePrefixedTree.Node(true, 7, "bar/Bar")
             )
         )
 
@@ -110,13 +105,13 @@ class FilePrefixedTreeTest {
         prefixedTree.insert(File("org/example/company/foo/bar/zum/Zum"))
 
         val expectedCompressedTree = FilePrefixedTree.Node(
-            null, "org/example/company",
+            false, 3, "org/example/company",
             mutableMapOf(
                 "foo" to FilePrefixedTree.Node(
-                    0, "foo",
+                    true, 4, "foo",
                     mutableMapOf(
                         "bar/zum/Zum" to FilePrefixedTree.Node(
-                            1, "bar/zum/Zum",
+                            true, 7, "bar/zum/Zum",
                         )
                     )
                 ),

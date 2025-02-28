@@ -32,9 +32,9 @@ import java.util.concurrent.atomic.AtomicInteger
 @ServiceScope(BuildTree::class)
 class FilePrefixedTree {
 
-    private var currentIndex = AtomicInteger(0)
+    private var currentIndex = AtomicInteger(1)
 
-    val root = Node(null, "")
+    val root = Node(false, 0, "")
 
 
     /**
@@ -54,14 +54,14 @@ class FilePrefixedTree {
                 continue
             }
 
-            current = current.children.computeIfAbsent(segment) { Node(null, segment) }
+            current = current.children.computeIfAbsent(segment) { Node(false, currentIndex.getAndIncrement(), segment) }
         }
 
-        if (current.isIntermediate) {
-            current.index = currentIndex.getAndIncrement()
-        }
+//        if (current.isIntermediate) {
+        current.isFinal = true
+//        }
 
-        return current.index!!
+        return current.index
     }
 
     /**
@@ -101,18 +101,18 @@ class FilePrefixedTree {
         }
 
         return when (current.children.size) {
-            0 -> Node(current.index, segmentsToCompress.compress())
-            // final child
+            0 -> Node(true, current.index, segmentsToCompress.compress())
             1 -> when (current.singleChild.children.size) {
+                // final child
                 0 -> {
                     segmentsToCompress.add(current.singleChild.segment)
-                    Node(current.singleChild.index, segmentsToCompress.compress())
+                    Node(true, current.singleChild.index, segmentsToCompress.compress())
                 }
 
-                else -> Node(current.index, segmentsToCompress.compress(), current.children.compress())
+                else -> Node(current.isFinal, current.index, segmentsToCompress.compress(), current.children.compress())
             }
 
-            else -> Node(current.index, segmentsToCompress.compress(), current.children.compress())
+            else -> Node(current.isFinal, current.index, segmentsToCompress.compress(), current.children.compress())
         }
     }
 
@@ -122,9 +122,7 @@ class FilePrefixedTree {
 
     private fun buildIndexFor(node: Node, segments: MutableList<String>, indexes: MutableMap<Int, File>) {
         segments.add(node.segment)
-        node.index?.let { idx ->
-            indexes[idx] = File("/${segments.joinToString("/")}")
-        }
+        indexes[node.index] = File("/${segments.joinToString("/")}")
         for (child in node.children.values) {
             buildIndexFor(child, segments, indexes)
         }
@@ -132,15 +130,13 @@ class FilePrefixedTree {
     }
 
     data class Node(
-        @Volatile var index: Int?,
+        @Volatile var isFinal: Boolean,
+        val index: Int,
         val segment: String,
         val children: MutableMap<String, Node> = ConcurrentHashMap()
     ) {
         val isIntermediate
-            get() = index == null
-
-        val isFinal
-            get() = !isIntermediate
+            get() = !isFinal
 
         val singleChild
             get() = children.entries.single().value
