@@ -181,7 +181,7 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
 
 // composition, collections
             public interface SomeData extends AdditionalData {
-//                  Property<String> getName();
+                  Property<String> getSome();
                   String getName();
                   void setName(String name);
 
@@ -228,6 +228,7 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
                         System.out.println("someData: " + sd.getName());
 
                         sd = getProblems().getInstantiator().newInstance(SomeData.class);
+                        sd.getSome().set("some");
 //                        sd.getName().set("someData");
                         sd.setName("someData");
                         System.out.println("someData: " + sd.getName());
@@ -238,6 +239,7 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
                         ProblemId problemId = ProblemId.create("type", "label", ProblemGroup.create("generic", "Generic"));
                         getProblems().getReporter().report(problemId, problem -> problem
                                 .additionalData(SomeData.class, d -> {
+                                    d.getSome().set("some");
                                     d.setName("someData");
                                     d.setNames(Collections.singletonList("someMoreData"));
                                     SomeOtherData sod = of.newInstance(SomeOtherData.class);
