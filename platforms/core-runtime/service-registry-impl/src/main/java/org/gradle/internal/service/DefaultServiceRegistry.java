@@ -24,6 +24,7 @@ import org.gradle.internal.concurrent.Stoppable;
 import javax.annotation.Nullable;
 import java.io.Closeable;
 import java.lang.annotation.Annotation;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -339,6 +340,18 @@ public class DefaultServiceRegistry implements CloseableServiceRegistry, Contain
     public Object get(Type serviceType) throws UnknownServiceException, ServiceLookupException {
         Object instance = find(serviceType);
         if (instance == null) {
+            System.err.println("getting service in " + this);
+
+            String processName = ManagementFactory.getRuntimeMXBean().getName();
+            System.err.println("Process Name: " + processName);
+
+            // Extract PID (works on most OS)
+            String pid = processName.split("@")[0];
+            System.err.println("Current Process ID: " + pid);
+            System.err.println("thread: " + Thread.currentThread());
+
+            new RuntimeException().printStackTrace();
+
             throw new UnknownServiceException(serviceType, String.format("No service of type %s available in %s.", format(serviceType), getDisplayName()));
         }
         return instance;

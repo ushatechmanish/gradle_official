@@ -4856,7 +4856,7 @@ Class <org.gradle.workers.internal.WorkerDaemonExpiration$SimpleMemoryExpiration
 Class <org.gradle.workers.internal.WorkerDaemonExpiration> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (WorkerDaemonExpiration.java:0)
 Class <org.gradle.workers.internal.WorkerDaemonFactory$1> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (WorkerDaemonFactory.java:0)
 Class <org.gradle.workers.internal.WorkerDaemonFactory> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (WorkerDaemonFactory.java:0)
-Class <org.gradle.workers.internal.WorkerDaemonServer$1> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (WorkerDaemonServer.java:0)
+Class <org.gradle.workers.internal.WorkerDaemonServer$ProblemsServiceProvider> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (WorkerDaemonServer.java:0)
 Class <org.gradle.workers.internal.WorkerDaemonServer$WorkerDaemonServices$1> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (WorkerDaemonServer.java:0)
 Class <org.gradle.workers.internal.WorkerDaemonServer$WorkerDaemonServices> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (WorkerDaemonServer.java:0)
 Class <org.gradle.workers.internal.WorkerDaemonServer$WorkerProjectServices$1> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (WorkerDaemonServer.java:0)

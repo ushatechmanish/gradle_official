@@ -238,7 +238,7 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
                         // This needs to be Java 6 compatible, as we are in a worker
                         ProblemId problemId = ProblemId.create("type", "label", ProblemGroup.create("generic", "Generic"));
                         getProblems().getReporter().report(problemId, problem -> problem
-                                .additionalData(SomeData.class, d -> {
+                                    .additionalData(SomeData.class, d -> {
                                     d.getSome().set("some");
                                     d.setName("someData");
                                     d.setNames(Collections.singletonList("someMoreData"));
@@ -261,6 +261,8 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
     }
 
     interface SomeDataView {
+        String getSome();
+
         String getName();
 
         List<String> getNames();
@@ -286,7 +288,14 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
 
                 @TaskAction
                 void executeTask() {
-                    getWorkerExecutor().${isolationMode}().submit(ProblemWorkerAction.class) {}
+                    getWorkerExecutor().${isolationMode}(
+//                                            spec -> {
+//                                                    spec.getForkOptions().getDebugOptions().getEnabled().set(true);
+//                                                    spec.getForkOptions().getDebugOptions().getPort().set(5005);
+//                                                    spec.getForkOptions().getDebugOptions().getServer().set(false);
+//                                                    spec.getForkOptions().getDebugOptions().getHost().set("localhost");
+//                                                }
+                                            ).submit(ProblemWorkerAction.class) {}
                 }
             }
 
@@ -310,6 +319,7 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
 
         def someDataView = listener.problems[0].additionalData.get(SomeDataView)
         someDataView.name == "someData"
+        someDataView.some == "some"
         someDataView.names == ["someMoreData"]
         someDataView.otherData.otherName == "otherName"
 

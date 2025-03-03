@@ -259,6 +259,7 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
         DefaultProblems.problemSummarizer = new WorkerProblemEmitter(responder);
 
         workerLogEventListener = parentServices.get(WorkerLogEventListener.class);
+//        ObjectFactory objectFactory = parentServices.get(ObjectFactory.class);
         RequestArgumentSerializers argumentSerializers = new RequestArgumentSerializers();
         try {
             if (instantiatorFactory == null) {
@@ -271,8 +272,10 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
                     // Make the argument serializers available so work implementations can register their own serializers
                     registration.add(RequestArgumentSerializers.class, argumentSerializers);
                     registration.add(InstantiatorFactory.class, instantiatorFactory);
+                    registration.add(ResponseProtocol.class, responder);
+//                    registration.add(ObjectFactory.class, objectFactory);
                     // TODO we should inject a worker-api specific implementation of InternalProblems here
-                    registration.addProvider(new ProblemsServiceProvider(responder, instantiatorFactory));
+//                    registration.addProvider(new ProblemsServiceProvider(responder, instantiatorFactory));
                 })
                 .build();
 
