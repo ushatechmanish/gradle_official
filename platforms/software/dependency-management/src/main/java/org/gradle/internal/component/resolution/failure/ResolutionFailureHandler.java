@@ -18,10 +18,12 @@ package org.gradle.internal.component.resolution.failure;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import org.gradle.api.artifacts.ModuleIdentifier;
 import org.gradle.api.artifacts.capability.CapabilitySelector;
 import org.gradle.api.artifacts.component.ComponentIdentifier;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.ResolvedVariant;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.ResolvedVariantSet;
+import org.gradle.api.internal.artifacts.ivyservice.resolveengine.graph.builder.ModuleResolveState;
 import org.gradle.api.internal.artifacts.transform.AttributeMatchingArtifactVariantSelector;
 import org.gradle.api.internal.artifacts.transform.TransformedVariant;
 import org.gradle.api.internal.attributes.AttributeContainerInternal;
@@ -52,6 +54,7 @@ import org.gradle.internal.component.resolution.failure.type.AmbiguousVariantsFa
 import org.gradle.internal.component.resolution.failure.type.ConfigurationDoesNotExistFailure;
 import org.gradle.internal.component.resolution.failure.type.ConfigurationNotCompatibleFailure;
 import org.gradle.internal.component.resolution.failure.type.IncompatibleMultipleNodesValidationFailure;
+import org.gradle.internal.component.resolution.failure.type.ModuleRejectedFailure;
 import org.gradle.internal.component.resolution.failure.type.NoCompatibleArtifactFailure;
 import org.gradle.internal.component.resolution.failure.type.NoCompatibleVariantsFailure;
 import org.gradle.internal.component.resolution.failure.type.NoVariantsWithMatchingCapabilitiesFailure;
@@ -110,8 +113,12 @@ public class ResolutionFailureHandler {
     }
 
     // region Component Selection failures
-    // TODO: Route these failures through this handler in order to standardize their description logic, supply consistent failure reporting
+    // TODO: Route more of these failures through this handler in order to standardize their description logic, supply consistent failure reporting
     //  via the Problems API, and allow for the possible custom descriptions in specific scenarios
+    public AbstractResolutionFailureException moduleRejected(ModuleIdentifier moduleId, String rejectionReason) {
+        ModuleRejectedFailure failure = new ModuleRejectedFailure(moduleId, rejectionReason);
+        return describeFailure(failure);
+    }
     // endregion Component Selection failures
 
     // region Variant Selection failures
