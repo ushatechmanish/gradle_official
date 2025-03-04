@@ -22,6 +22,7 @@ import org.gradle.api.internal.file.temp.TemporaryFileProvider;
 import org.gradle.api.problems.internal.DefaultProblems;
 import org.gradle.api.problems.internal.ExceptionProblemRegistry;
 import org.gradle.api.problems.internal.InternalProblems;
+import org.gradle.api.problems.internal.IsolatableToBytesSerializer;
 import org.gradle.api.problems.internal.ProblemEmitter;
 import org.gradle.api.problems.internal.ProblemReportCreator;
 import org.gradle.api.problems.internal.ProblemSummarizer;
@@ -60,7 +61,8 @@ public class ProblemsBuildTreeServices implements ServiceRegistrationProvider {
         ExceptionAnalyser exceptionAnalyser,
         Instantiator instantiator,
         PayloadSerializer payloadSerializer,
-        IsolatableFactory isolatableFactory
+        IsolatableFactory isolatableFactory,
+        IsolatableToBytesSerializer isolatableToBytesSerializer
     ) {
         return new DefaultProblems(
             problemSummarizer,
@@ -71,7 +73,7 @@ public class ProblemsBuildTreeServices implements ServiceRegistrationProvider {
             instantiator,
             payloadSerializer,
             isolatableFactory,
-            null);
+            isolatableToBytesSerializer);
     }
 
     @Provides
