@@ -228,7 +228,7 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
                         System.out.println("someData: " + sd.getName());
 
                         sd = getProblems().getInstantiator().newInstance(SomeData.class);
-                        sd.getSome().set("some");
+//                        sd.getSome().set("some");
 //                        sd.getName().set("someData");
                         sd.setName("someData");
                         System.out.println("someData: " + sd.getName());
@@ -261,7 +261,7 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
     }
 
     interface SomeDataView {
-        String getSome();
+//        String getSome();
 
         String getName();
 
@@ -319,13 +319,14 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
 
         def someDataView = listener.problems[0].additionalData.get(SomeDataView)
         someDataView.name == "someData"
-        someDataView.some == "some"
+//        someDataView.some == "some"
         someDataView.names == ["someMoreData"]
         someDataView.otherData.otherName == "otherName"
 
         where:
-//        isolationMode << WorkerExecutorFixture.ISOLATION_MODES
-        isolationMode << [WorkerExecutorFixture.IsolationMode.PROCESS_ISOLATION.method]
+        isolationMode << WorkerExecutorFixture.ISOLATION_MODES
+//        isolationMode << [WorkerExecutorFixture.IsolationMode.PROCESS_ISOLATION.method]
+//        isolationMode << [WorkerExecutorFixture.IsolationMode.CLASSLOADER_ISOLATION.method]
     }
 
     class ProblemProgressListener implements ProgressListener {

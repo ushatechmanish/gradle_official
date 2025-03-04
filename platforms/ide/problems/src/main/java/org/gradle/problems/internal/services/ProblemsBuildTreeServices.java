@@ -64,6 +64,8 @@ public class ProblemsBuildTreeServices implements ServiceRegistrationProvider {
         IsolatableFactory isolatableFactory,
         IsolatableToBytesSerializer isolatableToBytesSerializer
     ) {
+        System.err.println("injected " + instantiator);
+
         return new DefaultProblems(
             problemSummarizer,
             problemStream,
