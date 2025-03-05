@@ -69,14 +69,6 @@ public class ClientSidePayloadClassLoaderFactory implements PayloadClassLoaderFa
         }
 
         @Override
-        public Class<?> loadClass(String name) throws ClassNotFoundException {
-//            if (name.startsWith("org.gradle.api.provider.")) {
-//                return getParent().loadClass(name);
-//            }
-            return super.loadClass(name);
-        }
-
-        @Override
         protected byte[] transform(String className, byte[] bytes) {
             // First scan for annotation, and short circuit transformation if not present
             ClassReader classReader = new ClassReader(bytes);

@@ -109,7 +109,6 @@ public class ConnectionScopeServices implements ServiceRegistrationProvider {
         UserInputReader userInputReader,
         ShutdownCoordinator shutdownCoordinator,
         NotifyDaemonClientExecuter notifyDaemonClientExecuter,
-        IsolatableFactory isolatableFactory,
         IsolatableSerializerRegistry isolatableSerializerRegistry
     ) {
 
@@ -147,7 +146,6 @@ public class ConnectionScopeServices implements ServiceRegistrationProvider {
             userInputReader,
             shutdownCoordinator,
             notifyDaemonClientExecuter,
-            isolatableFactory,
             isolatableSerializerRegistry
         );
     }

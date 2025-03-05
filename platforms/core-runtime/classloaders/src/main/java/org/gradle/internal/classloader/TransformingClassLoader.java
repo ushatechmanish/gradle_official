@@ -84,10 +84,6 @@ public abstract class TransformingClassLoader extends VisitableURLClassLoader {
         return defineClass(name, bytes, 0, bytes.length, codeSource);
     }
 
-    protected Class<?> superFind(String name) throws ClassNotFoundException {
-        return super.findClass(name);
-    }
-
     @Nullable
     protected byte[] generateMissingClass(String name) {
         return null;

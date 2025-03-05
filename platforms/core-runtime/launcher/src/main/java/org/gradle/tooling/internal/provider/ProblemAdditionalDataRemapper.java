@@ -22,10 +22,8 @@ import org.gradle.internal.build.event.types.DefaultProblemDetails;
 import org.gradle.internal.build.event.types.DefaultProblemEvent;
 import org.gradle.internal.classloader.ClassLoaderUtils;
 import org.gradle.internal.classloader.ClassLoaderVisitor;
-import org.gradle.internal.classloader.FilteringClassLoader;
 import org.gradle.internal.classloader.VisitableURLClassLoader;
 import org.gradle.internal.isolation.Isolatable;
-import org.gradle.internal.isolation.IsolatableFactory;
 import org.gradle.process.internal.worker.request.IsolatableSerializerRegistry;
 import org.gradle.tooling.internal.protocol.problem.InternalAdditionalData;
 import org.gradle.tooling.internal.protocol.problem.InternalPayloadSerializedAdditionalData;
@@ -33,26 +31,21 @@ import org.gradle.tooling.internal.protocol.problem.InternalProblemDetailsVersio
 import org.gradle.tooling.internal.provider.serialization.PayloadSerializer;
 import org.gradle.tooling.internal.provider.serialization.SerializedPayload;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("unused")
 public class ProblemAdditionalDataRemapper implements BuildEventConsumer {
 
     private final PayloadSerializer payloadSerializer;
     private final BuildEventConsumer delegate;
-    private final IsolatableFactory isolatableFactory;
     private final IsolatableSerializerRegistry isolatableSerializerRegistry;
 
-    public ProblemAdditionalDataRemapper(PayloadSerializer payloadSerializer, BuildEventConsumer delegate, IsolatableFactory isolatableFactory, IsolatableSerializerRegistry isolatableSerializerRegistry) {
+    public ProblemAdditionalDataRemapper(PayloadSerializer payloadSerializer, BuildEventConsumer delegate, IsolatableSerializerRegistry isolatableSerializerRegistry) {
         this.payloadSerializer = payloadSerializer;
         this.delegate = delegate;
-        this.isolatableFactory = isolatableFactory;
         this.isolatableSerializerRegistry = isolatableSerializerRegistry;
     }
 
@@ -62,7 +55,6 @@ public class ProblemAdditionalDataRemapper implements BuildEventConsumer {
         delegate.dispatch(message);
     }
 
-    @SuppressWarnings("unused")
     private void remapAdditionalData(Object message) {
         if (!(message instanceof DefaultProblemEvent)) {
             return;
@@ -89,18 +81,13 @@ public class ProblemAdditionalDataRemapper implements BuildEventConsumer {
         byte[] isolatableBytes = serializedAdditionalData.getIsolatable();
 
         ClassLoader typeClassLoader = type.getClassLoader();
-        FilteringClassLoader.Spec filterSpec = new FilteringClassLoader.Spec();
-        filterSpec.allowClass(type);
-        FilteringClassLoader filteringClassLoader = new FilteringClassLoader(typeClassLoader, filterSpec);
 
         List<URL> classPath = new ArrayList<>();
 
         ((VisitableURLClassLoader) typeClassLoader).visit(new ClassLoaderVisitor() {
             @Override
             public void visitClassPath(URL[] urls) {
-                for (URL url : urls) {
-                    classPath.add(url);
-                }
+                Collections.addAll(classPath, urls);
             }
         });
 
@@ -110,28 +97,5 @@ public class ProblemAdditionalDataRemapper implements BuildEventConsumer {
             return deserialize.isolate();
         });
         ((DefaultProblemDetails) details).setAdditionalData(new DefaultInternalProxiedAdditionalData(state, o, serializedType));
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T> T createProxy(Class<T> interfaceType, Map<String, Object> state) {
-        return (T) Proxy.newProxyInstance(
-            interfaceType.getClassLoader(),
-            new Class<?>[]{interfaceType},
-            new DeepCopyInvocationHandler(state)
-        );
-    }
-
-    private static class DeepCopyInvocationHandler implements InvocationHandler {
-
-        private final Map<String, Object> state;
-
-        public DeepCopyInvocationHandler(Map<String, Object> state) {
-            this.state = state;
-        }
-
-        @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            return state.get(method.getName());
-        }
     }
 }
