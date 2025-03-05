@@ -22,8 +22,10 @@ import org.gradle.api.problems.internal.AdditionalDataBuilderFactory
 import org.gradle.api.problems.internal.DefaultProblemBuilder
 import org.gradle.api.problems.internal.GradleCoreProblemGroup
 import org.gradle.api.problems.internal.IsolatableToBytesSerializer
+import org.gradle.api.problems.internal.ProblemsInfrastructure
 import org.gradle.internal.isolation.IsolatableFactory
 import org.gradle.internal.reflect.Instantiator
+import org.gradle.problems.buildtree.ProblemStream
 import org.gradle.tooling.internal.provider.serialization.PayloadSerializer
 import spock.lang.Issue
 import spock.lang.Specification
@@ -54,7 +56,13 @@ class ProblemRendererTest extends Specification {
     }
 
     def DefaultProblemBuilder createProblemBuilder() {
-        new DefaultProblemBuilder(new AdditionalDataBuilderFactory(), Mock(Instantiator), Mock(PayloadSerializer), Mock(IsolatableFactory), Mock(IsolatableToBytesSerializer))
+        new DefaultProblemBuilder(new ProblemsInfrastructure(
+            new AdditionalDataBuilderFactory(),
+            Mock(Instantiator),
+            Mock(PayloadSerializer),
+            Mock(IsolatableFactory),
+            Mock(IsolatableToBytesSerializer),
+            Mock(ProblemStream)))
     }
 
     def "individual problem header is correct when contextual label is present"() {
