@@ -26,11 +26,12 @@ import org.gradle.internal.classloader.VisitableURLClassLoader;
 import org.gradle.internal.isolation.Isolatable;
 import org.gradle.process.internal.worker.request.IsolatableSerializerRegistry;
 import org.gradle.tooling.internal.protocol.problem.InternalAdditionalData;
-import org.gradle.tooling.internal.protocol.problem.InternalPayloadSerializedAdditionalData;
+import org.gradle.tooling.internal.protocol.problem.InternalPayloadSerializedAdditionalDataV2;
 import org.gradle.tooling.internal.protocol.problem.InternalProblemDetailsVersion2;
 import org.gradle.tooling.internal.provider.serialization.PayloadSerializer;
 import org.gradle.tooling.internal.provider.serialization.SerializedPayload;
 
+import javax.annotation.Nonnull;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,11 +66,10 @@ public class ProblemAdditionalDataRemapper implements BuildEventConsumer {
             return;
         }
         InternalAdditionalData additionalData = ((DefaultProblemDetails) details).getAdditionalData();
-        if (!(additionalData instanceof InternalPayloadSerializedAdditionalData)) {
+        if (!(additionalData instanceof InternalPayloadSerializedAdditionalDataV2)) {
             return;
         }
-
-        InternalPayloadSerializedAdditionalData serializedAdditionalData = (InternalPayloadSerializedAdditionalData) additionalData;
+        InternalPayloadSerializedAdditionalDataV2 serializedAdditionalData = (InternalPayloadSerializedAdditionalDataV2) additionalData;
         SerializedPayload serializedType = (SerializedPayload) serializedAdditionalData.getSerializedType();
         Map<String, Object> state = serializedAdditionalData.getAsMap();
 
@@ -80,16 +80,7 @@ public class ProblemAdditionalDataRemapper implements BuildEventConsumer {
 
         byte[] isolatableBytes = serializedAdditionalData.getIsolatable();
 
-        ClassLoader typeClassLoader = type.getClassLoader();
-
-        List<URL> classPath = new ArrayList<>();
-
-        ((VisitableURLClassLoader) typeClassLoader).visit(new ClassLoaderVisitor() {
-            @Override
-            public void visitClassPath(URL[] urls) {
-                Collections.addAll(classPath, urls);
-            }
-        });
+        List<URL> classPath = getClassPath(type);
 
         VisitableURLClassLoader visitableURLClassLoader = new VisitableURLClassLoader("name", getClass().getClassLoader(), classPath);
         Object o = ClassLoaderUtils.executeInClassloader(visitableURLClassLoader, () -> {
@@ -97,5 +88,17 @@ public class ProblemAdditionalDataRemapper implements BuildEventConsumer {
             return deserialize.isolate();
         });
         ((DefaultProblemDetails) details).setAdditionalData(new DefaultInternalProxiedAdditionalData(state, o, serializedType));
+    }
+
+    @Nonnull
+    private static List<URL> getClassPath(Class<?> type) {
+        List<URL> classPath = new ArrayList<>();
+        ((VisitableURLClassLoader) type.getClassLoader()).visit(new ClassLoaderVisitor() {
+            @Override
+            public void visitClassPath(URL[] urls) {
+                Collections.addAll(classPath, urls);
+            }
+        });
+        return classPath;
     }
 }

@@ -17,13 +17,13 @@
 package org.gradle.internal.build.event.types;
 
 import org.gradle.api.NonNullApi;
-import org.gradle.tooling.internal.protocol.problem.InternalPayloadSerializedAdditionalData;
+import org.gradle.tooling.internal.protocol.problem.InternalPayloadSerializedAdditionalDataV2;
 
 import java.io.Serializable;
 import java.util.Collections;
 
 @NonNullApi
-public class DefaultInternalPayloadSerializedAdditionalData extends DefaultInternalAdditionalData implements InternalPayloadSerializedAdditionalData, Serializable {
+public class DefaultInternalPayloadSerializedAdditionalData extends DefaultInternalAdditionalData implements InternalPayloadSerializedAdditionalDataV2, Serializable {
     private final byte[] isolatable;
     private final Object payload;
 

@@ -70,7 +70,7 @@ public class WorkerProcessIsolationProblemsServiceProvider implements ServiceReg
 
     @Nonnull
     @Provides
-    private static PayloadSerializer createPayloadSerializer() {
+    PayloadSerializer createPayloadSerializer() {
         ClassLoaderCache classLoaderCache = new ClassLoaderCache();
 
         ClassLoader parent = WorkerAction.class.getClassLoader();
@@ -166,7 +166,14 @@ public class WorkerProcessIsolationProblemsServiceProvider implements ServiceReg
     }
 
     @Provides
-    InternalProblems createInternalProblems(PayloadSerializer payloadSerializer, ServiceRegistry serviceRegistry, IsolatableFactory isolatableFactory, IsolatableSerializerRegistry isolatableSerializerRegistry, InstantiatorFactory instantiatorFactory, ResponseProtocol responder) {
+    InternalProblems createInternalProblems(
+        PayloadSerializer payloadSerializer,
+        ServiceRegistry serviceRegistry,
+        IsolatableFactory isolatableFactory,
+        IsolatableSerializerRegistry isolatableSerializerRegistry,
+        InstantiatorFactory instantiatorFactory,
+        ResponseProtocol responder
+    ) {
         return new DefaultProblems(
             new WorkerProblemEmitter(responder),
             null,
