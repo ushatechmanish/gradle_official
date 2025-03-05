@@ -84,7 +84,6 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
                     registration.add(RequestArgumentSerializers.class, argumentSerializers);
                     registration.add(InstantiatorFactory.class, instantiatorFactory);
                     registration.add(ResponseProtocol.class, responder);
-                    // TODO we should inject a worker-api specific implementation of InternalProblems here
                 })
                 .build();
 

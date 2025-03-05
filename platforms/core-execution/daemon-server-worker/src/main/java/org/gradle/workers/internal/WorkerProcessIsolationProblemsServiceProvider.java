@@ -84,7 +84,6 @@ public class WorkerProcessIsolationProblemsServiceProvider implements ServiceReg
                     new ModelClassLoaderFactory(modelClassLoader))));
     }
 
-
     @Provides
     PatternSpecFactory createPatternSpecFactory(ListenerManager listenerManager) {
         PatternSpecFactory patternSpecFactory = PatternSpecFactory.INSTANCE;

@@ -16,7 +16,6 @@ dependencies {
     api(projects.coreApi)
     api(projects.fileOperations)
     api(projects.files)
-//    api(projects.snapshotWorker)
     api(projects.modelCore)
     api(projects.requestHandlerWorker)
     api(projects.stdlibJavaExtensions)

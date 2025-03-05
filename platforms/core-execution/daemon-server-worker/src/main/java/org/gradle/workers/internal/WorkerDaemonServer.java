@@ -205,7 +205,6 @@ public class WorkerDaemonServer implements RequestHandler<TransportableActionExe
         }
     }
 
-
     static class WorkerProjectServices implements ServiceRegistrationProvider {
 
         public static CloseableServiceRegistry create(ServiceRegistry parent, File baseDir, File projectCacheDir) {

@@ -76,28 +76,29 @@ public class ConnectionScopeServices implements ServiceRegistrationProvider {
     }
 
     @Provides
-    IsolatableSerializerRegistry createIsolatableSerializerRegistry(ManagedFactoryRegistry managedFactoryRegistry) {
-        return new IsolatableSerializerRegistry(new ClassLoaderHierarchyHasher() {
+    ClassLoaderHierarchyHasher createClassLoaderHierarchyHasher() {
+        return new ClassLoaderHierarchyHasher() {
             @Nullable
             @Override
             public HashCode getClassLoaderHash(ClassLoader classLoader) {
                 throw new UnsupportedOperationException();
             }
-        }, managedFactoryRegistry);
+        };
+    }
+
+    @Provides
+    IsolatableSerializerRegistry createIsolatableSerializerRegistry(ClassLoaderHierarchyHasher classLoaderHierarchyHasher, ManagedFactoryRegistry managedFactoryRegistry) {
+        return new IsolatableSerializerRegistry(classLoaderHierarchyHasher, managedFactoryRegistry);
     }
 
     @Provides
     IsolatableFactory createIsolatableFactory(
+        ClassLoaderHierarchyHasher classLoaderHierarchyHasher,
         ManagedFactoryRegistry managedFactoryRegistry
     ) {
-        return new DefaultIsolatableFactory(new ClassLoaderHierarchyHasher() {
-            @Nullable
-            @Override
-            public HashCode getClassLoaderHash(ClassLoader classLoader) {
-                throw new UnsupportedOperationException();
-            }
-        }, managedFactoryRegistry);
+        return new DefaultIsolatableFactory(classLoaderHierarchyHasher, managedFactoryRegistry);
     }
+
     @Provides
     ProviderConnection createProviderConnection(
         BuildExecutor buildActionExecuter,

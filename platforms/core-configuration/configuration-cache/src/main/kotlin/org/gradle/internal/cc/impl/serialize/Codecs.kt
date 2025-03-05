@@ -158,7 +158,7 @@ class Codecs(
     inputFingerprinter: InputFingerprinter,
     buildOperationRunner: BuildOperationRunner,
     classLoaderHierarchyHasher: ClassLoaderHierarchyHasher,
-    isolatableFactory: org.gradle.internal.isolation.IsolatableFactory,
+    isolatableFactory: IsolatableFactory,
     managedFactoryRegistry: ManagedFactoryRegistry,
     parameterScheme: TransformParameterScheme,
     actionScheme: TransformActionScheme,
