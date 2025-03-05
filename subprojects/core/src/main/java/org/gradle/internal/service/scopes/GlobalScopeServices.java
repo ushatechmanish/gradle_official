@@ -192,8 +192,8 @@ public class GlobalScopeServices extends WorkerSharedGlobalScopeServices {
     }
 
     @Provides
-    InstanceGenerator createInstantiator(InstantiatorFactory instantiatorFactory, ServiceRegistry serviceRegistry) {
-        return instantiatorFactory.decorateLenient(serviceRegistry);
+    InstanceGenerator createInstantiator(InstantiatorFactory instantiatorFactory) {
+        return instantiatorFactory.decorateLenient();
     }
 
     @Provides

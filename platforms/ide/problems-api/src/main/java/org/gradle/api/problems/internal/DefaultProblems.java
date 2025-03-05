@@ -34,7 +34,7 @@ public class DefaultProblems implements InternalProblems {
 
     private final ProblemStream problemStream;
     private final CurrentBuildOperationRef currentBuildOperationRef;
-    public static ProblemSummarizer problemSummarizer;
+    private final ProblemSummarizer problemSummarizer;
     private final InternalProblemReporter internalReporter;
     private final AdditionalDataBuilderFactory additionalDataBuilderFactory = new AdditionalDataBuilderFactory();
     private final ExceptionProblemRegistry exceptionProblemRegistry;
@@ -55,9 +55,7 @@ public class DefaultProblems implements InternalProblems {
         IsolatableFactory isolatableFactory,
         IsolatableToBytesSerializer isolatableSerializer
     ) {
-        if (DefaultProblems.problemSummarizer == null) {
-            DefaultProblems.problemSummarizer = problemSummarizer;
-        }
+        this.problemSummarizer = problemSummarizer;
         this.problemStream = problemStream;
         this.currentBuildOperationRef = currentBuildOperationRef;
         this.exceptionProblemRegistry = exceptionProblemRegistry;
@@ -77,7 +75,7 @@ public class DefaultProblems implements InternalProblems {
     @Nonnull
     private DefaultProblemReporter createReporter() {
         return new DefaultProblemReporter(
-            DefaultProblems.problemSummarizer,
+            problemSummarizer,
             problemStream,
             currentBuildOperationRef,
             additionalDataBuilderFactory,

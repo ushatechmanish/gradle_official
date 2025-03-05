@@ -34,13 +34,14 @@ import org.gradle.internal.concurrent.ExecutorFactory;
 import org.gradle.internal.event.ListenerManager;
 import org.gradle.internal.exception.ExceptionAnalyser;
 import org.gradle.internal.execution.WorkExecutionTracker;
+import org.gradle.internal.instantiation.InstantiatorFactory;
 import org.gradle.internal.isolation.IsolatableFactory;
 import org.gradle.internal.operations.BuildOperationProgressEventEmitter;
 import org.gradle.internal.operations.CurrentBuildOperationRef;
 import org.gradle.internal.problems.failure.FailureFactory;
-import org.gradle.internal.reflect.Instantiator;
 import org.gradle.internal.service.Provides;
 import org.gradle.internal.service.ServiceRegistrationProvider;
+import org.gradle.internal.service.ServiceRegistry;
 import org.gradle.internal.service.scopes.Scope;
 import org.gradle.internal.service.scopes.ServiceScope;
 import org.gradle.problems.buildtree.ProblemStream;
@@ -59,20 +60,19 @@ public class ProblemsBuildTreeServices implements ServiceRegistrationProvider {
         ProblemStream problemStream,
         ExceptionProblemRegistry exceptionProblemRegistry,
         ExceptionAnalyser exceptionAnalyser,
-        Instantiator instantiator,
+        InstantiatorFactory instantiatorFactory,
         PayloadSerializer payloadSerializer,
         IsolatableFactory isolatableFactory,
-        IsolatableToBytesSerializer isolatableToBytesSerializer
+        IsolatableToBytesSerializer isolatableToBytesSerializer,
+        ServiceRegistry serviceRegistry
     ) {
-        System.err.println("injected " + instantiator);
-
         return new DefaultProblems(
             problemSummarizer,
             problemStream,
             CurrentBuildOperationRef.instance(),
             exceptionProblemRegistry,
             exceptionAnalyser,
-            instantiator,
+            instantiatorFactory.decorateLenient(serviceRegistry), //TODO use more restricted registry, maybe only ObjectFactory
             payloadSerializer,
             isolatableFactory,
             isolatableToBytesSerializer);
