@@ -21,21 +21,17 @@ dependencies {
     api(projects.messaging)
     api(projects.problemsApi)
     api(projects.serialization)
-    api(projects.serviceProvider)
     api(projects.snapshotsWorker)
     api(projects.stdlibJavaExtensions)
     api(projects.workerMain)
 
     implementation(projects.classloaders)
     implementation(projects.coreApi)
-    implementation(projects.fileCollections)
-    implementation(projects.fileOperations)
     implementation(projects.persistentCache)
-    implementation(projects.native)
     implementation(projects.serviceLookup)
+    implementation(projects.serviceProvider)
     implementation(projects.serviceRegistryBuilder)
     implementation(projects.snapshots)
 
     implementation(libs.guava)
-    implementation(libs.jsr305)
 }
