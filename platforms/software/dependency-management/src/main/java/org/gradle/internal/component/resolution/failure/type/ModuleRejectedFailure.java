@@ -17,13 +17,14 @@
 package org.gradle.internal.component.resolution.failure.type;
 
 import org.gradle.api.artifacts.ModuleIdentifier;
+import org.gradle.api.internal.artifacts.ivyservice.resolveengine.graph.builder.ModuleResolveState;
 
 public final class ModuleRejectedFailure extends AbstractComponentSelectionFailure {
-    private final String rejectionReason;
+    private final ModuleResolveState moduleResolveState;
 
-    public ModuleRejectedFailure(ModuleIdentifier moduleIdentifier, String rejectionReason) {
+    public ModuleRejectedFailure(ModuleIdentifier moduleIdentifier, ModuleResolveState moduleResolveState) {
         super(moduleIdentifier);
-        this.rejectionReason = rejectionReason;
+        this.moduleResolveState = moduleResolveState;
     }
 
     @Override
@@ -31,7 +32,7 @@ public final class ModuleRejectedFailure extends AbstractComponentSelectionFailu
         return getModuleIdentifier().toString();
     }
 
-    public String getRejectionReason() {
-        return rejectionReason;
+    public ModuleResolveState getModuleResolveState() {
+        return moduleResolveState;
     }
 }

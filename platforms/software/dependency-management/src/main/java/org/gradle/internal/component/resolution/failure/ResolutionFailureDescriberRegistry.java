@@ -20,6 +20,7 @@ import org.gradle.internal.component.resolution.failure.describer.AmbiguousArtif
 import org.gradle.internal.component.resolution.failure.describer.AmbiguousArtifactsFailureDescriber;
 import org.gradle.internal.component.resolution.failure.describer.AmbiguousVariantsFailureDescriber;
 import org.gradle.internal.component.resolution.failure.describer.ModuleRejectedFailureDescriber;
+import org.gradle.internal.component.resolution.failure.describer.ModuleRejectedIncompatibleRequiredVersionsFailureDescriber;
 import org.gradle.internal.component.resolution.failure.describer.NoCompatibleArtifactFailureDescriber;
 import org.gradle.internal.component.resolution.failure.describer.NoCompatibleVariantsFailureDescriber;
 import org.gradle.internal.component.resolution.failure.describer.ConfigurationNotCompatibleFailureDescriber;
@@ -84,6 +85,7 @@ public final class ResolutionFailureDescriberRegistry {
         ResolutionFailureDescriberRegistry registry = new ResolutionFailureDescriberRegistry(instanceGenerator);
 
         // Component Selection failure
+        registry.registerDescriber(ModuleRejectedFailure.class, ModuleRejectedIncompatibleRequiredVersionsFailureDescriber.class);
         registry.registerDescriber(ModuleRejectedFailure.class, ModuleRejectedFailureDescriber.class);
 
         // Variant Selection failure

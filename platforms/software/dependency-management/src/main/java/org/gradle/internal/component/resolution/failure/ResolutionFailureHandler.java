@@ -18,7 +18,6 @@ package org.gradle.internal.component.resolution.failure;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import org.gradle.api.artifacts.ModuleIdentifier;
 import org.gradle.api.artifacts.capability.CapabilitySelector;
 import org.gradle.api.artifacts.component.ComponentIdentifier;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.artifact.ResolvedVariant;
@@ -115,8 +114,8 @@ public class ResolutionFailureHandler {
     // region Component Selection failures
     // TODO: Route more of these failures through this handler in order to standardize their description logic, supply consistent failure reporting
     //  via the Problems API, and allow for the possible custom descriptions in specific scenarios
-    public AbstractResolutionFailureException moduleRejected(ModuleIdentifier moduleId, String rejectionReason) {
-        ModuleRejectedFailure failure = new ModuleRejectedFailure(moduleId, rejectionReason);
+    public AbstractResolutionFailureException moduleRejected(ModuleResolveState moduleResolveState) {
+        ModuleRejectedFailure failure = new ModuleRejectedFailure(moduleResolveState.getId(), moduleResolveState);
         return describeFailure(failure);
     }
     // endregion Component Selection failures

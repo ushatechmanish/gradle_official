@@ -30,6 +30,6 @@ public abstract class ModuleRejectedFailureDescriber extends AbstractResolutionF
 
     @Override
     public AbstractResolutionFailureException describeFailure(ModuleRejectedFailure failure) {
-        return new ComponentSelectionException(failure.getRejectionReason(), failure);
+        return new ComponentSelectionException(failure.getModuleResolveState().getSelected().getRejectedErrorMessage(), failure);
     }
 }
