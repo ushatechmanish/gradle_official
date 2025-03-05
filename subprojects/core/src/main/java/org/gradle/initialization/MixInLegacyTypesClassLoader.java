@@ -105,7 +105,7 @@ public class MixInLegacyTypesClassLoader extends TransformingClassLoader {
 
     @Override
     protected boolean shouldTransform(String className) {
-        return (legacyTypesSupport.getClassesToMixInGroovyObject().contains(className) || legacyTypesSupport.getSyntheticClasses().contains(className)) && !className.startsWith("org.gradle.api.provider.");
+        return legacyTypesSupport.getClassesToMixInGroovyObject().contains(className) || legacyTypesSupport.getSyntheticClasses().contains(className);
     }
 
     @Override
