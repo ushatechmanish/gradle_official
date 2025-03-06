@@ -29,7 +29,6 @@ import org.gradle.tooling.internal.provider.serialization.PayloadSerializer;
 import javax.annotation.Nonnull;
 
 @ServiceScope(Scope.BuildTree.class)
-@SuppressWarnings({"static", "StaticAssignmentInConstructor"})
 public class DefaultProblems implements InternalProblems {
 
     private final CurrentBuildOperationRef currentBuildOperationRef;
@@ -79,27 +78,11 @@ public class DefaultProblems implements InternalProblems {
     }
 
     @Override
-    public AdditionalDataBuilderFactory getAdditionalDataBuilderFactory() {
-        return infrastructure.getAdditionalDataBuilderFactory();
+    public ProblemsInfrastructure getInfrastructure() {
+        return infrastructure;
     }
-
-    @Override
-    public Instantiator getInstantiator() {
-        return infrastructure.getInstantiator();
-    }
-
     @Override
     public InternalProblemBuilder getProblemBuilder() {
         return new DefaultProblemBuilder(infrastructure);
-    }
-
-    @Override
-    public IsolatableFactory getIsolatableFactory() {
-        return infrastructure.getIsolatableFactory();
-    }
-
-    @Override
-    public IsolatableToBytesSerializer getIsolatableSerializer() {
-        return infrastructure.getIsolatableSerializer();
     }
 }

@@ -54,8 +54,8 @@ public class WorkerAction implements Action<WorkerProcessContext>, Serializable,
     private transient ResponseProtocol responder;
     private transient WorkerLogEventListener workerLogEventListener;
     private transient RequestHandler<Object, Object> implementation;
-    private transient Exception failure;
     private InstantiatorFactory instantiatorFactory;
+    private transient Exception failure;
 
     public WorkerAction(Class<?> workerImplementation) {
         this.workerImplementationName = workerImplementation.getName();
