@@ -112,7 +112,6 @@ public class ConnectionScopeServices implements ServiceRegistrationProvider {
         NotifyDaemonClientExecuter notifyDaemonClientExecuter,
         IsolatableSerializerRegistry isolatableSerializerRegistry
     ) {
-
         ClassLoaderCache classLoaderCache = new ClassLoaderCache();
 
         ClassLoader parent = this.getClass().getClassLoader();

@@ -227,7 +227,7 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
 //                        System.out.println("someData: " + sd.getName().get());
                         System.out.println("someData: " + sd.getName());
 
-                        sd = getProblems().getInstantiator().newInstance(SomeData.class);
+                        sd = getProblems().getInfrastructure().getInstantiator().newInstance(SomeData.class);
 //                        sd.getSome().set("some");
 //                        sd.getName().set("someData");
                         sd.setName("someData");

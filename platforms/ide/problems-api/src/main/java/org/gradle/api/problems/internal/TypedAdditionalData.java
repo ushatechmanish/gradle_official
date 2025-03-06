@@ -27,7 +27,13 @@ import org.gradle.api.problems.AdditionalData;
 @Incubating
 public interface TypedAdditionalData extends AdditionalData {
 
-    byte[] getIsolated();
+    /**
+     * the serialized type/class of the object
+     *
+     * @return the data
+     * @since 8.13
+     */
+    byte[] getByteSerializedIsolate();
 
     /**
      * the serialized type/class of the object

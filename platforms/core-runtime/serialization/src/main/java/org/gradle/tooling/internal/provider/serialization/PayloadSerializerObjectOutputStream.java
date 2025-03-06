@@ -57,8 +57,7 @@ class PayloadSerializerObjectOutputStream extends ExceptionReplacingObjectOutput
     }
 
     private void writeClassLoader(Class<?> targetClass) throws IOException {
-        Package aPackage = targetClass.getPackage();
-        if (TopLevelExceptionPlaceholder.class.getPackage().equals(aPackage)) {
+        if (TopLevelExceptionPlaceholder.class.getPackage().equals(targetClass.getPackage())) {
             writeShort(SAME_CLASSLOADER_TOKEN);
         } else {
             writeShort(map.visitClass(targetClass));

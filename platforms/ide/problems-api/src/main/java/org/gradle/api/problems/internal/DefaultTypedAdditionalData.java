@@ -23,11 +23,11 @@ import java.util.Arrays;
 
 public class DefaultTypedAdditionalData implements TypedAdditionalData {
     private final SerializedPayload type;
-    private final byte[] isolated;
+    private final byte[] byteSerializedIsolate;
 
-    public DefaultTypedAdditionalData(SerializedPayload type, byte[] isolated) {
+    public DefaultTypedAdditionalData(SerializedPayload type, byte[] byteSerializedIsolate) {
         this.type = type;
-        this.isolated = isolated;
+        this.byteSerializedIsolate = byteSerializedIsolate;
     }
 
     @Override
@@ -41,16 +41,16 @@ public class DefaultTypedAdditionalData implements TypedAdditionalData {
             return false;
         }
         DefaultTypedAdditionalData that = (DefaultTypedAdditionalData) o;
-        return Arrays.equals(isolated, that.isolated) && Objects.equal(type, that.type);
+        return Arrays.equals(byteSerializedIsolate, that.byteSerializedIsolate) && Objects.equal(type, that.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(Arrays.hashCode(isolated), type);
+        return Objects.hashCode(Arrays.hashCode(byteSerializedIsolate), type);
     }
 
     @Override
-    public byte[] getIsolated() {
-        return isolated;
+    public byte[] getByteSerializedIsolate() {
+        return byteSerializedIsolate;
     }
 }

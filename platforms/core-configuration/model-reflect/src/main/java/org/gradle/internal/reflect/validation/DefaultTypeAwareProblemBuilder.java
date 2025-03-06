@@ -32,7 +32,6 @@ import java.util.Optional;
 @NonNullApi
 public class DefaultTypeAwareProblemBuilder extends DelegatingProblemBuilder implements TypeAwareProblemBuilder {
 
-
     public DefaultTypeAwareProblemBuilder(InternalProblemBuilder problemBuilder) {
         super(problemBuilder);
     }

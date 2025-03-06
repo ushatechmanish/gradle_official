@@ -1790,7 +1790,6 @@ Class <org.gradle.internal.instantiation.generator.ConstructorSelector> is not a
 Class <org.gradle.internal.instantiation.generator.DefaultInstantiationScheme$DefaultDeserializationInstantiator> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (DefaultInstantiationScheme.java:0)
 Class <org.gradle.internal.instantiation.generator.DefaultInstantiationScheme> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (DefaultInstantiationScheme.java:0)
 Class <org.gradle.internal.instantiation.generator.DefaultInstantiatorFactory$ManagedTypeFactory> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (DefaultInstantiatorFactory.java:0)
-Class <org.gradle.internal.instantiation.generator.DefaultInstantiatorFactory> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (DefaultInstantiatorFactory.java:0)
 Class <org.gradle.internal.instantiation.generator.DependencyInjectingInstantiator$1> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (DependencyInjectingInstantiator.java:0)
 Class <org.gradle.internal.instantiation.generator.DependencyInjectingInstantiator> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (DependencyInjectingInstantiator.java:0)
 Class <org.gradle.internal.instantiation.generator.InjectUtil> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (InjectUtil.java:0)
