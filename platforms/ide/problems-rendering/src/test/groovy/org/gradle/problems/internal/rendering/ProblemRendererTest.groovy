@@ -56,13 +56,16 @@ class ProblemRendererTest extends Specification {
     }
 
     def DefaultProblemBuilder createProblemBuilder() {
-        new DefaultProblemBuilder(new ProblemsInfrastructure(
-            new AdditionalDataBuilderFactory(),
-            Mock(Instantiator),
-            Mock(PayloadSerializer),
-            Mock(IsolatableFactory),
-            Mock(IsolatableToBytesSerializer),
-            Mock(ProblemStream)))
+        new DefaultProblemBuilder(
+            new ProblemsInfrastructure(
+                new AdditionalDataBuilderFactory(),
+                Mock(Instantiator),
+                Mock(PayloadSerializer),
+                Mock(IsolatableFactory),
+                Mock(IsolatableToBytesSerializer),
+                Mock(ProblemStream)
+            )
+        )
     }
 
     def "individual problem header is correct when contextual label is present"() {

@@ -239,7 +239,7 @@ public class ProblemsProgressEventUtils {
             );
         } else if (additionalData instanceof TypedAdditionalData) {
             TypedAdditionalData typedData = (TypedAdditionalData) additionalData;
-            return new DefaultInternalPayloadSerializedAdditionalData(typedData.getByteSerializedIsolate(), typedData.getSerializedType());
+            return new DefaultInternalPayloadSerializedAdditionalData(typedData.getBytesForIsolatadObject(), typedData.getSerializedType());
         } else {
             return new DefaultInternalAdditionalData(Collections.emptyMap());
         }

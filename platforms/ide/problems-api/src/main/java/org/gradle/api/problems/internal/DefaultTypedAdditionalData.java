@@ -50,7 +50,7 @@ public class DefaultTypedAdditionalData implements TypedAdditionalData {
     }
 
     @Override
-    public byte[] getByteSerializedIsolate() {
+    public byte[] getBytesForIsolatadObject() {
         return byteSerializedIsolate;
     }
 }

@@ -49,7 +49,7 @@ class DefaultProblemBuilderTest extends Specification {
     }
 
     DefaultProblemBuilder createProblemBuilder() {
-        new DefaultProblemBuilder(EMPTY_STREAM, new AdditionalDataBuilderFactory(), Mock(Instantiator.class), Mock(PayloadSerializer.class), Mock(IsolatableFactory), Mock(IsolatableToBytesSerializer))
+        new DefaultProblemBuilder(new ProblemsInfrastructure(new AdditionalDataBuilderFactory(), Mock(Instantiator.class), Mock(PayloadSerializer.class), Mock(IsolatableFactory), Mock(IsolatableToBytesSerializer), EMPTY_STREAM))
     }
 
     def 'additionalData accepts DeprecationDataInternalSpec'() {

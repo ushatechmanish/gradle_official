@@ -20,7 +20,7 @@ import org.gradle.api.Incubating;
 import org.gradle.api.problems.AdditionalData;
 
 /**
- * General additional data type that can be used to attach arbitrary data to a problem with a string map.
+ * additional data type that can be used to attach arbitrary data to a problem using isolated serialized data.
  *
  * @since 8.13
  */
@@ -28,12 +28,12 @@ import org.gradle.api.problems.AdditionalData;
 public interface TypedAdditionalData extends AdditionalData {
 
     /**
-     * the serialized type/class of the object
+     * the serialized isolated additional data
      *
      * @return the data
-     * @since 8.13
+     * @since 8.14
      */
-    byte[] getByteSerializedIsolate();
+    byte[] getBytesForIsolatadObject();
 
     /**
      * the serialized type/class of the object

@@ -90,7 +90,9 @@ class DefaultProblemTest extends Specification {
                 Mock(PayloadSerializer),
                 Mock(IsolatableFactory),
                 Mock(IsolatableToBytesSerializer),
-                Mock(ProblemStream)))
+                Mock(ProblemStream)
+            )
+        )
         def problem = createTestProblem(Severity.WARNING)
         def builder = toBuilder(problem)
         def newProblem = builder

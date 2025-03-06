@@ -28,12 +28,8 @@ import org.gradle.api.problems.ProblemLocation;
 import org.gradle.api.problems.Severity;
 import org.gradle.internal.code.UserCodeSource;
 import org.gradle.internal.isolation.Isolatable;
-import org.gradle.internal.isolation.IsolatableFactory;
-import org.gradle.internal.reflect.Instantiator;
 import org.gradle.problems.Location;
 import org.gradle.problems.ProblemDiagnostics;
-import org.gradle.problems.buildtree.ProblemStream;
-import org.gradle.tooling.internal.provider.serialization.PayloadSerializer;
 import org.gradle.tooling.internal.provider.serialization.SerializedPayload;
 
 import javax.annotation.Nonnull;
@@ -63,17 +59,6 @@ public class DefaultProblemBuilder implements InternalProblemBuilder {
         this.problemsInfrastructure = infrastructure;
         this.additionalData = null;
         this.solutions = new ArrayList<String>();
-    }
-
-    public DefaultProblemBuilder(
-        @Nullable ProblemStream problemStream,
-        AdditionalDataBuilderFactory additionalDataBuilderFactory,
-        Instantiator instantiator,
-        PayloadSerializer payloadSerializer,
-        IsolatableFactory isolatableFactory,
-        IsolatableToBytesSerializer isolatableSerializer
-    ) {
-        this(new ProblemsInfrastructure(additionalDataBuilderFactory, instantiator, payloadSerializer, isolatableFactory, isolatableSerializer, problemStream));
     }
 
     public DefaultProblemBuilder(

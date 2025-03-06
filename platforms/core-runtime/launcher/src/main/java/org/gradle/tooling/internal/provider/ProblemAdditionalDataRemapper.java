@@ -17,6 +17,7 @@
 package org.gradle.tooling.internal.provider;
 
 import org.gradle.initialization.BuildEventConsumer;
+import org.gradle.internal.build.event.types.DefaultInternalPayloadSerializedAdditionalData;
 import org.gradle.internal.build.event.types.DefaultInternalProxiedAdditionalData;
 import org.gradle.internal.build.event.types.DefaultProblemDetails;
 import org.gradle.internal.build.event.types.DefaultProblemEvent;
@@ -26,7 +27,6 @@ import org.gradle.internal.classloader.VisitableURLClassLoader;
 import org.gradle.internal.isolation.Isolatable;
 import org.gradle.process.internal.worker.request.IsolatableSerializerRegistry;
 import org.gradle.tooling.internal.protocol.problem.InternalAdditionalData;
-import org.gradle.tooling.internal.protocol.problem.InternalPayloadSerializedAdditionalDataV2;
 import org.gradle.tooling.internal.protocol.problem.InternalProblemDetailsVersion2;
 import org.gradle.tooling.internal.provider.serialization.PayloadSerializer;
 import org.gradle.tooling.internal.provider.serialization.SerializedPayload;
@@ -66,10 +66,10 @@ public class ProblemAdditionalDataRemapper implements BuildEventConsumer {
             return;
         }
         InternalAdditionalData additionalData = ((DefaultProblemDetails) details).getAdditionalData();
-        if (!(additionalData instanceof InternalPayloadSerializedAdditionalDataV2)) {
+        if (!(additionalData instanceof DefaultInternalPayloadSerializedAdditionalData)) {
             return;
         }
-        InternalPayloadSerializedAdditionalDataV2 serializedAdditionalData = (InternalPayloadSerializedAdditionalDataV2) additionalData;
+        DefaultInternalPayloadSerializedAdditionalData serializedAdditionalData = (DefaultInternalPayloadSerializedAdditionalData) additionalData;
         SerializedPayload serializedType = (SerializedPayload) serializedAdditionalData.getSerializedType();
         Map<String, Object> state = serializedAdditionalData.getAsMap();
 
@@ -78,7 +78,7 @@ public class ProblemAdditionalDataRemapper implements BuildEventConsumer {
             return;
         }
 
-        byte[] isolatableBytes = serializedAdditionalData.getIsolatable();
+        byte[] isolatableBytes = serializedAdditionalData.getBytesForIsolatadObject();
 
         List<URL> classPath = getClassPath(type);
 

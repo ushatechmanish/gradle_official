@@ -72,7 +72,7 @@ public class ProblemsBuildTreeServices implements ServiceRegistrationProvider {
             CurrentBuildOperationRef.instance(),
             exceptionProblemRegistry,
             exceptionAnalyser,
-            instantiatorFactory.decorateLenient(serviceRegistry), //TODO use more restricted registry, maybe only ObjectFactory
+            instantiatorFactory.decorateLenient(serviceRegistry),
             payloadSerializer,
             isolatableFactory,
             isolatableToBytesSerializer);

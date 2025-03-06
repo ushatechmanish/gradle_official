@@ -67,7 +67,7 @@ import java.util.List;
 import static org.gradle.internal.classloader.ClassLoaderUtils.classFromContextLoader;
 
 @NonNullApi
-@ServiceScope({Scope.UserHome.class, Scope.Global.class})
+@ServiceScope({Scope.UserHome.class, Scope.Global.class})  //Global scope is needed for the usage in process isolated worker actions
 public class IsolatableSerializerRegistry extends DefaultSerializerRegistry implements IsolatableToBytesSerializer {
     private static final byte STRING_VALUE = (byte) 0;
     private static final byte BOOLEAN_VALUE = (byte) 1;
