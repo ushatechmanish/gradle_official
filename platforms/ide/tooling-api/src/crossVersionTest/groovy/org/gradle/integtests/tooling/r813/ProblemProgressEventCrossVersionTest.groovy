@@ -16,7 +16,6 @@
 
 package org.gradle.integtests.tooling.r813
 
-
 import org.gradle.integtests.tooling.fixture.ProblemsApiGroovyScriptUtils
 import org.gradle.integtests.tooling.fixture.TargetGradleVersion
 import org.gradle.integtests.tooling.fixture.ToolingApiSpecification
@@ -27,7 +26,6 @@ import org.gradle.tooling.events.ProgressListener
 import org.gradle.tooling.events.problems.Problem
 import org.gradle.tooling.events.problems.SingleProblemEvent
 import org.gradle.tooling.events.problems.internal.DefaultAdditionalData
-import spock.lang.IgnoreRest
 
 @ToolingApiVersion(">=8.13")
 @TargetGradleVersion(">=8.13")
@@ -43,7 +41,6 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
         return listener.problems
     }
 
-    @IgnoreRest
     def "Problems expose details via Tooling API events with problem definition"() {
         given:
         buildFile """
@@ -86,7 +83,7 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
         where:
         detailsConfig              | expectedDetails | documentationConfig                         | expecteDocumentation
         '.details("long message")' | "long message"  | '.documentedAt("https://docs.example.org")' | 'https://docs.example.org'
-//        ''                         | null            | ''                                          | null
+        '' | null | '' | null
     }
 
 

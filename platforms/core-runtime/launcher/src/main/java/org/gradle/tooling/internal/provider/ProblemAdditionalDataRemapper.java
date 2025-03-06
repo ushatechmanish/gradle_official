@@ -36,7 +36,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class ProblemAdditionalDataRemapper implements BuildEventConsumer {
 
@@ -71,7 +70,6 @@ public class ProblemAdditionalDataRemapper implements BuildEventConsumer {
         }
         DefaultInternalPayloadSerializedAdditionalData serializedAdditionalData = (DefaultInternalPayloadSerializedAdditionalData) additionalData;
         SerializedPayload serializedType = (SerializedPayload) serializedAdditionalData.getSerializedType();
-        Map<String, Object> state = serializedAdditionalData.getAsMap();
 
         Class<?> type = (Class<?>) payloadSerializer.deserialize(serializedType);
         if (type == null) {
@@ -87,7 +85,7 @@ public class ProblemAdditionalDataRemapper implements BuildEventConsumer {
             Isolatable<?> isolatable = isolatableSerializerRegistry.deserialize(isolatableBytes);
             return isolatable.isolate();
         });
-        ((DefaultProblemDetails) details).setAdditionalData(new DefaultInternalProxiedAdditionalData(state, o, serializedType));
+        ((DefaultProblemDetails) details).setAdditionalData(new DefaultInternalProxiedAdditionalData(o, serializedType));
     }
 
     @Nonnull
