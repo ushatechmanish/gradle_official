@@ -42,8 +42,9 @@ class IntegrationTestTimeoutInterceptor extends TimeoutInterceptor {
         try {
             super.intercept(invocation)
         } catch (SpockTimeoutError e) {
+            String debug = new JavaProcessStackTracesMonitor(new File(".")).ps().getSuspiciousDaemons().toString();
             String threadDumpFile = getThreadDump()
-            throw new SpockAssertionError("Timeout, see thread dumps at $threadDumpFile", e)
+            throw new SpockAssertionError("Timeout, see thread dumps at $threadDumpFile: $debug", e)
         } catch (Throwable t) {
             throw t
         }

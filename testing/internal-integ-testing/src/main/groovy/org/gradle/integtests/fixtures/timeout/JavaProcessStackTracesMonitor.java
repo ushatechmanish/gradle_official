@@ -168,7 +168,7 @@ public class JavaProcessStackTracesMonitor {
             }
         }
 
-        List<JavaProcessInfo> getSuspiciousDaemons() {
+        public List<JavaProcessInfo> getSuspiciousDaemons() {
             return Stream.of(stdout.split("\\n"))
                 .filter(this::isSuspiciousDaemon)
                 .map(this::extractProcessInfo)
@@ -193,7 +193,7 @@ public class JavaProcessStackTracesMonitor {
         }
     }
 
-    private StdoutAndPatterns ps() {
+    public StdoutAndPatterns ps() {
         String[] command = isWindows() ? new String[]{"wmic", "process", "get", "processid,commandline"} : new String[]{"ps", "x"};
         ExecResult result = run(command);
         output.printf("Run: %s", Arrays.toString(command));
