@@ -22,9 +22,11 @@ class FlakyTest extends Specification {
     def "test"() {
         def file = new File("/tmp/marker")
 
-        if(!file.exists()) {
+        if (!file.exists()) {
             file.createNewFile()
             assert false
+        } else {
+            Thread.sleep(1000 * 300)
         }
         expect:
         true
