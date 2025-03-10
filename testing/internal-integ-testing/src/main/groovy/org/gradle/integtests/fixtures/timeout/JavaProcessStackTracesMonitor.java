@@ -270,7 +270,10 @@ public class JavaProcessStackTracesMonitor {
 
 
     public File printAllStackTracesByJstack() {
-        output.println(ps().getSuspiciousDaemons().stream().map(JavaProcessInfo::jstack).collect(Collectors.joining("\n")));
+        List<JavaProcessInfo> daemons = ps().getSuspiciousDaemons();
+        System.out.println("Found suspicious daemons: " + daemons);
+        output.println(daemons.stream().map(JavaProcessInfo::jstack).collect(Collectors.joining("\n")));
+        output.flush();
         return outputFile;
     }
 }
