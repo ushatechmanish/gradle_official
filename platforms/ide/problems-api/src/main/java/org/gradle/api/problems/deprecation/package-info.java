@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+/**
+ * Public deprecation API based on the Problems API.
+ */
 @NonNullApi
 package org.gradle.api.problems.deprecation;
 
