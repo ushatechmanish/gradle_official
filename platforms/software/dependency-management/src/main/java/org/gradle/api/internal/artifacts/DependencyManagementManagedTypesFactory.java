@@ -32,12 +32,12 @@ import org.gradle.internal.service.scopes.ServiceScope;
  */
 @ManagedObjectProvider
 @ServiceScope({Scope.Build.class, Scope.Project.class})
-public class DependencyManagementMangedTypesFactory {
+public class DependencyManagementManagedTypesFactory {
 
     private final Instantiator instantiator;
     private final DependencyFactoryInternal dependencyFactory;
 
-    public DependencyManagementMangedTypesFactory(
+    public DependencyManagementManagedTypesFactory(
         DependencyFactoryInternal dependencyFactory,
         InstantiatorFactory instantiatorFactory,
         ServiceRegistry serviceRegistry

@@ -22,6 +22,7 @@ import org.gradle.internal.instantiation.generator.annotations.ManagedObjectProv
 import org.gradle.internal.service.AnnotatedServiceLifecycleHandler;
 import org.gradle.internal.service.scopes.Scope;
 import org.gradle.internal.service.scopes.ServiceScope;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
@@ -39,6 +40,7 @@ import java.util.function.Function;
  * Discovers all services annotated with {@link ManagedObjectProvider} and searches its methods for those annotated
  * with {@link ManagedObjectCreator}.
  */
+@NullMarked
 @ServiceScope({Scope.Global.class, Scope.BuildTree.class, Scope.Build.class, Scope.Project.class})
 public class ManagedObjectRegistry implements AnnotatedServiceLifecycleHandler {
 

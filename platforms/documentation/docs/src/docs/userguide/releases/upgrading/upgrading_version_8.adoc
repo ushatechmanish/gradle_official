@@ -71,6 +71,11 @@ The `Settings.getDefaults()` incubating method introduced in 8.10 has been remov
 Use`Settings.defaults(Action<SharedModelDefaults>)` method, taking a lambda, instead.
 The change is driven by the need to interpret such default values in the scope of individual projects and not at Settings level.
 
+==== Removed incubating method `ObjectFactory#dependencyCollector()`
+
+The incubating `ObjectFactory#dependencyCollector()` method has been removed.
+DependencyCollectors can still be instantiated within Gradle managed objects.
+
 === Deprecations
 
 [[null-attribute-lookup]]
@@ -175,11 +180,6 @@ There is not yet a Gradle deprecation warning emitted for their use.
 However, if the build is configured to fail on warnings during Kotlin script or plugin code compilation, this change may cause the build to fail.
 
 A standard Gradle deprecation warning will be printed upon use when these methods are fully deprecated in a future version.
-
-==== Removed incubating method `ObjectFactory#dependencyCollector()`
-
-The incubating `ObjectFactory#dependencyCollector()` method has been removed.
-DependencyCollectors can still be instantiated within Gradle managed objects.
 
 === Deprecations
 
