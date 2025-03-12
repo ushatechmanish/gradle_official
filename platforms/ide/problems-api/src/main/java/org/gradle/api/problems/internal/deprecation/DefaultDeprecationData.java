@@ -17,88 +17,55 @@
 package org.gradle.api.problems.internal.deprecation;
 
 import org.gradle.api.problems.deprecation.DeprecationData;
-import org.gradle.api.problems.deprecation.DeprecationDataSpec;
 import org.gradle.api.problems.deprecation.ReportSource;
-import org.gradle.api.problems.internal.AdditionalDataBuilder;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
 
 public class DefaultDeprecationData implements DeprecationData, Serializable {
 
-    private final ReportSource reportSource;
-    private final String removedIn;
-    private final String replacedBy;
-    private final String reason;
+    private ReportSource source;
+    private String removedIn;
+    private String replacedBy;
+    private String because;
 
-    public DefaultDeprecationData(ReportSource reportSource, @Nullable String removedIn, @Nullable String because, @Nullable String reason) {
-        this.reportSource = reportSource;
-        this.removedIn = removedIn;
-        this.replacedBy = because;
-        this.reason = reason;
-    }
-
+    @Nullable
     @Override
     public ReportSource getSource() {
-        return reportSource;
+        return source;
     }
 
-    @Override
+    public void setSource(ReportSource source) {
+        this.source = source;
+    }
+
     @Nullable
+    @Override
     public String getRemovedIn() {
         return removedIn;
     }
 
-    @Override
+    public void setRemovedIn(String removedIn) {
+        this.removedIn = removedIn;
+    }
+
     @Nullable
+    @Override
     public String getReplacedBy() {
         return replacedBy;
     }
 
-    @Override
+    public void setReplacedBy(String replacedBy) {
+        this.replacedBy = replacedBy;
+    }
+
     @Nullable
+    @Override
     public String getBecause() {
-        return reason;
+        return because;
     }
 
-    static class Builder implements DeprecationDataSpec, AdditionalDataBuilder<DeprecationData> {
-        private ReportSource reportSource;
-        private String removedIn;
-        private String replacedBy;
-        private String reason;
-
-        public Builder(ReportSource reportSource) {
-            this.reportSource = reportSource;
-        }
-
-        @Override
-        public DeprecationDataSpec source(ReportSource source) {
-            this.reportSource = source;
-            return this;
-        }
-
-        @Override
-        public DeprecationDataSpec removedIn(String version) {
-            this.removedIn = version;
-            return this;
-        }
-
-        @Override
-        public DeprecationDataSpec replacedBy(String reason) {
-            this.replacedBy = reason;
-            return this;
-        }
-
-        @Override
-        public DeprecationDataSpec because(String reason) {
-            this.reason = reason;
-            return this;
-        }
-
-        @Override
-        public DeprecationData build() {
-            return new DefaultDeprecationData(reportSource, removedIn, replacedBy, reason);
-        }
+    public void setBecause(String because) {
+        this.because = because;
     }
-
 }

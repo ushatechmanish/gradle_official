@@ -26,6 +26,8 @@ import javax.annotation.Nullable;
  * Additional data shipped with a deprecation.
  * <p>
  * This data is accessible, after reporting the deprecation, to consumers of problem events.
+ *
+ * @since 8.14
  */
 @Incubating
 public interface DeprecationData extends AdditionalData {
@@ -34,13 +36,16 @@ public interface DeprecationData extends AdditionalData {
      * Returns from where the deprecation is reported from.
      *
      * @return the source of the deprecation.
+     * @since 8.14
      */
+    @Nullable
     ReportSource getSource();
 
     /**
      * Returns the version in which the deprecation will become an error.
      *
      * @return the version in which the deprecation will become an error.
+     * @since 8.14
      */
     @Nullable
     String getRemovedIn();
@@ -49,6 +54,7 @@ public interface DeprecationData extends AdditionalData {
      * Returns the feature that replaces the deprecated feature.
      *
      * @return the feature that replaces the deprecated feature.
+     * @since 8.14
      */
     @Nullable
     String getReplacedBy();
@@ -57,6 +63,7 @@ public interface DeprecationData extends AdditionalData {
      * Returns human-readable reason of why the deprecation was introduced.
      *
      * @return reason of why the deprecation was introduced
+     * @since 8.14
      */
     @Nullable
     String getBecause();

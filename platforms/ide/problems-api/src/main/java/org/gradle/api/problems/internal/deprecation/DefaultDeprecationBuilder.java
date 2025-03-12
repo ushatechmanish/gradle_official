@@ -15,6 +15,7 @@
  */
 package org.gradle.api.problems.internal.deprecation;
 
+import org.gradle.api.Action;
 import org.gradle.api.problems.deprecation.DeprecateMethodSpec;
 import org.gradle.api.problems.deprecation.DeprecatePluginSpec;
 import org.gradle.api.problems.deprecation.DeprecateSpec;
@@ -24,28 +25,31 @@ import org.gradle.api.problems.internal.InternalProblemBuilder;
 
 class DefaultDeprecationBuilder implements DeprecateSpec, DeprecatePluginSpec, DeprecateMethodSpec {
     private final InternalProblemBuilder builder;
-    private final DefaultDeprecationData.Builder additionalDataBuilder;
+    private final ReportSource source;
+    private String replacedBy;
+    private String because;
+    private String removedIn;
 
-    public DefaultDeprecationBuilder(ReportSource reportSource, InternalProblemBuilder builder) {
+    public DefaultDeprecationBuilder(ReportSource source, InternalProblemBuilder builder) {
         this.builder = builder;
-        this.additionalDataBuilder = new DefaultDeprecationData.Builder(reportSource);
+        this.source = source;
     }
 
     @Override
     public DefaultDeprecationBuilder replacedBy(String replacement) {
-        additionalDataBuilder.replacedBy(replacement);
+        this.replacedBy = replacement;
         return this;
     }
 
     @Override
     public DefaultDeprecationBuilder removedInVersion(String version) {
-        additionalDataBuilder.removedIn(version);
+        this.removedIn = version;
         return this;
     }
 
     @Override
     public DefaultDeprecationBuilder because(String reason) {
-        builder.details(reason);
+        this.because = reason;
         return this;
     }
 
@@ -54,7 +58,15 @@ class DefaultDeprecationBuilder implements DeprecateSpec, DeprecatePluginSpec, D
     }
 
     public InternalProblem build() {
-        builder.additionalDataInternal(additionalDataBuilder.build());
+        builder.additionalData(DefaultDeprecationData.class, new Action<DefaultDeprecationData>() {
+            @Override
+            public void execute(DefaultDeprecationData defaultDeprecationData) {
+                defaultDeprecationData.setSource(source);
+                defaultDeprecationData.setReplacedBy(replacedBy);
+                defaultDeprecationData.setRemovedIn(removedIn);
+                defaultDeprecationData.setBecause(because);
+            }
+        });
         return builder.build();
     }
 }
