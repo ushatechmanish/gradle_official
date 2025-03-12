@@ -24,7 +24,9 @@ import org.gradle.api.problems.internal.InternalProblem;
 import org.gradle.api.problems.internal.InternalProblemBuilder;
 
 class DefaultDeprecationBuilder implements DeprecateSpec, DeprecatePluginSpec, DeprecateMethodSpec {
+    // Base problem builder
     private final InternalProblemBuilder builder;
+    // Additional data fields
     private final ReportSource source;
     private String replacedBy;
     private String because;
