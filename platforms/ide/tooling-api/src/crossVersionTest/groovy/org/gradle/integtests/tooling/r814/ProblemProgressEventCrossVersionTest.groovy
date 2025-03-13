@@ -218,6 +218,13 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
         }
 
         then:
+        def problems = listener.problems
+        problems.size() == 1
+
+        def deprecation = problems[0]
+        deprecation.contextualLabel.contextualLabel == "test deprecation"
+        def additionalData = deprecation.additionalData.getAsMap()
+        additionalData.size() == 1
 
     }
 }

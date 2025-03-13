@@ -16,57 +16,59 @@
 
 package org.gradle.api.problems.internal.deprecation;
 
-import org.gradle.api.problems.AdditionalData;
 import org.gradle.api.problems.deprecation.DeprecationData;
 import org.gradle.api.problems.deprecation.ReportSource;
 import org.gradle.api.problems.internal.AdditionalDataBuilder;
 
 import javax.annotation.Nullable;
 
-public class DefaultDeprecationData implements DeprecationData {
+public class DefaultDeprecationDataBuilder implements DeprecationDataSpec, AdditionalDataBuilder<DeprecationData> {
 
-    private final ReportSource source;
-    private final String removedIn;
-    private final String replacedBy;
-    private final String because;
+    private ReportSource source;
+    private String removedIn;
+    private String replacedBy;
+    private String because;
 
-    public DefaultDeprecationData(ReportSource source, String removedIn, String replacedBy, String because) {
+    public DefaultDeprecationDataBuilder(
+        @Nullable ReportSource source,
+        @Nullable String removedIn,
+        @Nullable String replacedBy,
+        @Nullable String because
+    ) {
         this.source = source;
         this.removedIn = removedIn;
         this.replacedBy = replacedBy;
         this.because = because;
     }
 
-    @Nullable
     @Override
-    public ReportSource getSource() {
-        return source;
+    public void reportSource(ReportSource source) {
+        this.source = source;
     }
 
-    @Nullable
     @Override
-    public String getRemovedIn() {
-        return removedIn;
+    public void replacedBy(String replacement) {
+        this.replacedBy = replacement;
     }
 
-    @Nullable
     @Override
-    public String getReplacedBy() {
-        return replacedBy;
+    public void removedIn(String version) {
+        this.removedIn = version;
     }
 
-    @Nullable
     @Override
-    public String getBecause() {
-        return because;
+    public void because(String reason) {
+        this.because = reason;
     }
 
-    public static AdditionalDataBuilder<? extends AdditionalData> builder(@Nullable DeprecationData input) {
-        if (input == null) {
-            return new DefaultDeprecationDataBuilder(null, null, null, null);
-        } else {
-            return new DefaultDeprecationDataBuilder(input.getSource(), input.getRemovedIn(), input.getReplacedBy(), input.getBecause());
-        }
+    @Override
+    public DeprecationData build() {
+        return new DefaultDeprecationData(
+            source,
+            removedIn,
+            replacedBy,
+            because
+        );
     }
 
 }

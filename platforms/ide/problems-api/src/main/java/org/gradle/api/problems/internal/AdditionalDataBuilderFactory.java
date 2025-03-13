@@ -49,6 +49,19 @@ public final class AdditionalDataBuilderFactory {
                     return DefaultDeprecationData.builder((DeprecationData) instance);
                 }
             }));
+        // Deprecation-API based deprecation problems
+        additionalDataProviders.put(
+            org.gradle.api.problems.internal.deprecation.DeprecationDataSpec.class,
+            new DataTypeAndProvider(
+                org.gradle.api.problems.deprecation.DeprecationData.class,
+                new Function<AdditionalData, AdditionalDataBuilder<? extends AdditionalData>>() {
+                    @Override
+                    public AdditionalDataBuilder<? extends AdditionalData> apply(AdditionalData input) {
+                        return org.gradle.api.problems.internal.deprecation.DefaultDeprecationData.builder((org.gradle.api.problems.deprecation.DeprecationData) input);
+                    }
+                }
+            )
+        );
         additionalDataProviders.put(TypeValidationDataSpec.class, new DataTypeAndProvider(
             TypeValidationData.class,
             new Function<AdditionalData, AdditionalDataBuilder<? extends AdditionalData>>() {
