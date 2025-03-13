@@ -225,6 +225,5 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
         deprecation.contextualLabel.contextualLabel == "test deprecation"
         def additionalData = deprecation.additionalData.getAsMap()
         additionalData.size() == 1
-
     }
 }
