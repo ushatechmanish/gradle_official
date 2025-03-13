@@ -21,7 +21,7 @@ class BuildLogicTest(
         applyDefaults(
             model,
             this,
-            ":build-logic:test -PskipBuildLogicTest=false",
+            ":build-logic:test -PskipBuildLogicTests=false",
             extraParameters =
                 listOf(
                     stage.getBuildScanCustomValueParam(),
