@@ -40,7 +40,7 @@ public class DefaultDeprecationReporter implements DeprecationReporter {
     public void deprecate(ReportSource reportSource, String label, Action<DeprecateSpec> spec) {
         DefaultDeprecationBuilder deprecationBuilder = new DefaultDeprecationBuilder(reportSource, reporter.createProblemBuilder());
         deprecationBuilder.getProblemBuilder()
-            .id("generic", "Generic deprecation", GradleCoreProblemGroup.deprecation().thisGroup())
+            .id("generic", "Generic deprecation", GradleCoreProblemGroup.deprecation())
             .contextualLabel(label)
             .stackLocation()
             .withException(new RuntimeException());
@@ -69,7 +69,7 @@ public class DefaultDeprecationReporter implements DeprecationReporter {
                 ProblemGroup.create(
                     "gradle",
                     "Gradle",
-                    GradleCoreProblemGroup.deprecation().thisGroup()
+                    GradleCoreProblemGroup.deprecation()
                 )
             );
         } else if (reportSource instanceof ReportSource.PluginReportSource) {
@@ -83,7 +83,7 @@ public class DefaultDeprecationReporter implements DeprecationReporter {
                     ProblemGroup.create(
                         id,
                         id,
-                        GradleCoreProblemGroup.deprecation().thisGroup()
+                        GradleCoreProblemGroup.deprecation()
                     )
                 )
             );
@@ -96,7 +96,7 @@ public class DefaultDeprecationReporter implements DeprecationReporter {
     public void deprecatePlugin(ReportSource reportSource, String pluginId, Action<DeprecatePluginSpec> spec) {
         DefaultDeprecationBuilder deprecationBuilder = new DefaultDeprecationBuilder(reportSource, reporter.createProblemBuilder());
         deprecationBuilder.getProblemBuilder()
-            .id(pluginId, pluginId, GradleCoreProblemGroup.deprecation().plugin())
+            .id(pluginId, pluginId, GradleCoreProblemGroup.deprecation())
             .contextualLabel(String.format("Plugin '%s' is deprecated", pluginId))
             .stackLocation()
             .withException(new RuntimeException());

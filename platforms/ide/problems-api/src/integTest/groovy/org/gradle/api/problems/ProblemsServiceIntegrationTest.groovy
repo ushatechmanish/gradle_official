@@ -86,7 +86,7 @@ class ProblemsServiceIntegrationTest extends AbstractIntegrationSpec {
         expect:
         succeeds("test")
         verifyAll(receivedProblem(0)) {
-            definition.id.fqid == 'deprecation-logger:properties-should-be-assigned-using-the-propname-value-syntax-setting-a-property-via-the-gradle-generated-propname-value-or-propname-value-syntax-in-groovy-dsl'
+            definition.id.fqid == 'deprecation:properties-should-be-assigned-using-the-propname-value-syntax-setting-a-property-via-the-gradle-generated-propname-value-or-propname-value-syntax-in-groovy-dsl'
             definition.id.displayName == """Properties should be assigned using the 'propName = value' syntax. Setting a property via the Gradle-generated 'propName value' or 'propName(value)' syntax in Groovy DSL has been deprecated."""
             originLocations.size() == 1
             //guarantee no duplicate locations
