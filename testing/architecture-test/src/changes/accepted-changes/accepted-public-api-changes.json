@@ -1,27 +1,35 @@
 {
     "acceptedApiChanges": [
         {
-            "type": "org.gradle.plugin.devel.GradlePluginDevelopmentExtension",
-            "member": "Method org.gradle.plugin.devel.GradlePluginDevelopmentExtension.getPlugins()",
-            "acceptation": "auto-generated as managed properties",
+            "type": "org.gradle.api.file.RelativePath",
+            "member": "Method org.gradle.api.file.RelativePath.getParent()",
+            "acceptation": "Method can return null values",
             "changes": [
-                "Method is now abstract"
+                "From non-null returning to null returning breaking change"
             ]
         },
         {
-            "type": "org.gradle.plugin.devel.GradlePluginDevelopmentExtension",
-            "member": "Method org.gradle.plugin.devel.GradlePluginDevelopmentExtension.getVcsUrl()",
-            "acceptation": "auto-generated as managed properties",
+            "type": "org.gradle.api.tasks.javadoc.Groovydoc",
+            "member": "Method org.gradle.api.tasks.javadoc.Groovydoc.getAntGroovydoc()",
+            "acceptation": "these methods were deprecated",
             "changes": [
-                "Method is now abstract"
+                "Method has been removed"
             ]
         },
         {
-            "type": "org.gradle.plugin.devel.GradlePluginDevelopmentExtension",
-            "member": "Method org.gradle.plugin.devel.GradlePluginDevelopmentExtension.getWebsite()",
-            "acceptation": "auto-generated as managed properties",
+            "type": "org.gradle.api.tasks.javadoc.Groovydoc",
+            "member": "Method org.gradle.api.tasks.javadoc.Groovydoc.setAntGroovydoc(org.gradle.api.internal.tasks.AntGroovydoc)",
+            "acceptation": "these methods were deprecated",
             "changes": [
-                "Method is now abstract"
+                "Method has been removed"
+            ]
+        },
+        {
+            "type": "org.gradle.api.tasks.testing.Test",
+            "member": "Method org.gradle.api.tasks.testing.Test.setForkEvery(java.lang.Long)",
+            "acceptation": "Remove deprecated method",
+            "changes": [
+                "Method has been removed"
             ]
         }
     ]

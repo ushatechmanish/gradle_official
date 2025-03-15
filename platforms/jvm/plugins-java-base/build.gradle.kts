@@ -41,10 +41,11 @@ dependencies {
 
     api(libs.groovy)
     api(libs.inject)
-    api(libs.jsr305)
+    api(libs.jspecify)
 
     implementation(projects.fileCollections)
     implementation(projects.fileOperations)
+    implementation(projects.functional)
     implementation(projects.jvmServices)
     implementation(projects.logging)
     implementation(projects.platformBase)
